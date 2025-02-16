@@ -7,5 +7,6 @@ class User(models.Model):
     phone = models.CharField(max_length=10)
     address = models.TextField()
     user_type = models.CharField(max_length=10)
+    age = models.IntegerField(null = True,default = 18)
     def __str__(self):
         return self.username

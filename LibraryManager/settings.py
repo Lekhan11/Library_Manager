@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zmzw%kcp-h1x*z46@x1@s!oh6$0baj_&$7b=wj1)e444n#)-tx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -76,8 +76,13 @@ WSGI_APPLICATION = 'LibraryManager.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'library',
+        'USER' : 'root',
+        'PASSWORD' : 'lekhan2005',
+        'HOST' : 'localhost',
+        'PORT' : '3306',
+        
     }
 }
 
