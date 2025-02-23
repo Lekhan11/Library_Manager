@@ -77,15 +77,14 @@ WSGI_APPLICATION = 'LibraryManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'library',
-        'USER' : 'root',
-        'PASSWORD' : 'lekhan2005',
-        'HOST' : 'localhost',
+        'NAME': 'freedb_library1',
+        'USER' : 'freedb_lekhan10',
+        'PASSWORD' : 'Jww%9CGj6f**8@W',
+        'HOST' : 'sql.freedb.tech',
         'PORT' : '3306',
         
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
