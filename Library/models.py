@@ -1,12 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser,Group,Permission
 
-class User(models.Model):
-    username = models.CharField(max_length=20)
-    password = models.CharField(max_length=20)
-    email = models.EmailField(max_length=50)
-    phone = models.CharField(max_length=10)
-    address = models.TextField()
-    user_type = models.CharField(max_length=10)
-    age = models.IntegerField(null = True,default = 18)
+class Staff(AbstractUser):
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    groups = models.ManyToManyField(Group, related_name="library_user_groups", blank=True)
+    user_permissions = models.ManyToManyField(Permission, related_name="library_user_permissions", blank=True)
     def __str__(self):
         return self.username
