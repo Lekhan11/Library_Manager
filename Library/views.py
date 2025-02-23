@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from .models import *
-def login(request):
+from django.contrib.auth import authenticate, login
+def LoginPage(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        chk_user = User.objects.filter(username=username,password=password)
-        if chk_user:
+        chk_user = authenticate(request, username=username, password=password)
+        if chk_user.is_student:
+            login(request,chk_user)
             return render(request, 'home.html')
         else:
             return render(request, 'login.html',context={'error':'Invalid Username or Password'})
