@@ -21,3 +21,4 @@ class CustomUserAdmin(UserAdmin):
 # Register the custom Users model with the admin panel
 admin.site.register(Users, CustomUserAdmin)
 admin.site.register(StudentExtra)
+admin.site.register(Books)

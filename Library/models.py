@@ -12,10 +12,22 @@ class Users(AbstractUser):
     def __str__(self):
         return self.username
     class Meta:
-        verbose_name = "User"  # 👈 Change this!
-        verbose_name_plural = "Users"  # 👈 Change this too!
+        verbose_name = "User"  
+        verbose_name_plural = "Users" 
 class StudentExtra(models.Model):
     user = models.OneToOneField(Users,on_delete=models.CASCADE)
     roll_no = models.CharField(max_length=20)
+    class_name = models.CharField(max_length=20)
+    section = models.CharField(max_length=20)
     def __str__(self):
         return self.roll_no
+
+class Books(models.Model):
+    title = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    publication = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    quantity = models.IntegerField()
+    issued = models.IntegerField(default=0)
+    def __str__(self):
+        return self.title
