@@ -24,4 +24,5 @@ def HomePage(request):
 @login_required(login_url='login')
 def IssueBooks(request):
     return render(request, 'issue_books.html')
-    
+def updateUser(request):
+    return render(request, 'update.html')
