@@ -8,7 +8,23 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
+<<<<<<< HEAD
 set VIRTUAL_ENV=C:\Users\MOHANAPRIYA\OneDrive\Desktop\Library_Manager\.venv
+=======
+<<<<<<< HEAD
+set "VIRTUAL_ENV=C:\Users\nisth\OneDrive\Desktop\Library_Manager\.venv"
+=======
+<<<<<<< HEAD
+set VIRTUAL_ENV=C:\Users\MOHANAPRIYA\OneDrive\Desktop\Library_Manager\.venv
+=======
+<<<<<<< HEAD
+set "VIRTUAL_ENV=C:\Users\nisth\OneDrive\Desktop\Library_Manager\.venv"
+=======
+set VIRTUAL_ENV=C:\Users\Student\Desktop\Library_Manager\.venv
+>>>>>>> ee447cb873326c3252d73dca4f0841ba5ac4cbb0
+>>>>>>> df7e7c569361a5bbf44c311cd9041bdda0fc1b0b
+>>>>>>> 8e53bff0694ab97156bba7318f45368001c33096
+>>>>>>> 099067a46d89e936b33fb40ccbba2fb51248bde1
 
 if not defined PROMPT set PROMPT=$P$G
 

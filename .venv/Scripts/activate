@@ -36,6 +36,24 @@ deactivate () {
 deactivate nondestructive
 
 # on Windows, a path can contain colons and backslashes and has to be converted:
+<<<<<<< HEAD
+=======
+case "$(uname)" in
+    CYGWIN*|MSYS*|MINGW*)
+        # transform D:\path\to\venv to /d/path/to/venv on MSYS and MINGW
+        # and to /cygdrive/d/path/to/venv on Cygwin
+        VIRTUAL_ENV=$(cygpath 'C:\Users\nisth\OneDrive\Desktop\Library_Manager\.venv')
+        export VIRTUAL_ENV
+        ;;
+    *)
+        # use the path as-is
+        export VIRTUAL_ENV='C:\Users\nisth\OneDrive\Desktop\Library_Manager\.venv'
+        ;;
+esac
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 099067a46d89e936b33fb40ccbba2fb51248bde1
 if [ "${OSTYPE:-}" = "cygwin" ] || [ "${OSTYPE:-}" = "msys" ] ; then
     # transform D:\path\to\venv to /d/path/to/venv on MSYS
     # and to /cygdrive/d/path/to/venv on Cygwin
@@ -44,6 +62,11 @@ else
     # use the path as-is
     export VIRTUAL_ENV="C:\Users\MOHANAPRIYA\OneDrive\Desktop\Library_Manager\.venv"
 fi
+<<<<<<< HEAD
+=======
+>>>>>>> ee447cb873326c3252d73dca4f0841ba5ac4cbb0
+>>>>>>> 8e53bff0694ab97156bba7318f45368001c33096
+>>>>>>> 099067a46d89e936b33fb40ccbba2fb51248bde1
 
 _OLD_VIRTUAL_PATH="$PATH"
 PATH="$VIRTUAL_ENV/Scripts:$PATH"
