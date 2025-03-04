@@ -21,7 +21,6 @@ class StudentExtra(models.Model):
     section = models.CharField(max_length=20)
     def __str__(self):
         return self.roll_no
-<<<<<<< HEAD
 class Category(models.Model):
     name = models.CharField(max_length=100)
     def __str__(self):
@@ -52,15 +51,3 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.book.title} reserved by {self.user.username}"
-=======
-
-class Books(models.Model):
-    title = models.CharField(max_length=100)
-    author = models.CharField(max_length=100)
-    publication = models.CharField(max_length=100)
-    category = models.CharField(max_length=100)
-    quantity = models.IntegerField()
-    issued = models.IntegerField(default=0)
-    def __str__(self):
-        return self.title
->>>>>>> f675dea84c9a67429fc10386dadfe20658ed0325
