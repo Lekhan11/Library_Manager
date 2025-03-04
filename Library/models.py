@@ -21,7 +21,6 @@ class StudentExtra(models.Model):
     section = models.CharField(max_length=20)
     def __str__(self):
         return self.roll_no
-<<<<<<< HEAD
 
 class Books(models.Model):
     title = models.CharField(max_length=100)
@@ -32,35 +31,3 @@ class Books(models.Model):
     issued = models.IntegerField(default=0)
     def __str__(self):
         return self.title
-=======
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.name
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.CharField(max_length=100)
-    publisher = models.CharField(max_length=100)
-    edition = models.CharField(max_length=50,blank=True,null=True)
-    quantity = models.IntegerField()
-    categories = models.ManyToManyField(Category, related_name='books')
-    STATUS_CHOICES = [("Available", "Available"), ("Issued", "Issued"), ("Reserved", "Reserved")]
-    availability_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Available")
-    def __str__(self):
-        return self.title
-class Reservation(models.Model):
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Approved', 'Approved'),
-        ('Cancelled', 'Cancelled'),
-    ]
-
-    user = models.ForeignKey(Users, on_delete=models.CASCADE) 
-    book = models.ForeignKey('Book', on_delete=models.CASCADE)
-    reservation_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    expiry_date = models.DateField()
-
-    def __str__(self):
-        return f"{self.book.title} reserved by {self.user.username}"
->>>>>>> a1448b4b38e9fa7cd9107c8c6f4d59d9ab931f2e
