@@ -21,3 +21,7 @@ def LoginPage(request):
 @login_required(login_url='login')
 def HomePage(request):
     return render(request, 'home.html')
+@login_required(login_url='login')
+def IssueBooks(request):
+    return render(request, 'issue_books.html')
+    
