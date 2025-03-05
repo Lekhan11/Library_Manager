@@ -9,7 +9,8 @@
     <center>
         <h1>ISSUE DETAILS</h1>
     </center>
-    <form>
+    <form method="POST" action="">
+        {% csrf_token %}
         <center>
             <table>
                 <tr>
@@ -25,12 +26,9 @@
                     <td>Book Category:</td>
                     <td>
                         <select>
-                            <option>Tamil</option>
-                            <option>English</option>
-                            <option>Maths</option>
-                            <option>Science</option>
-                            <option>Social</option>
-                            <option>Story</option>
+                            {% for category in categories %}
+                            <option>{{ category }}</option>
+                            {% endfor %}
                         </select>
                     </td>
                 </tr>

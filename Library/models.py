@@ -34,6 +34,7 @@ class Book(models.Model):
     categories = models.ManyToManyField(Category, related_name='books')
     STATUS_CHOICES = [("Available", "Available"), ("Issued", "Issued"), ("Reserved", "Reserved")]
     availability_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Available")
+    isbn = models.CharField(max_length=20, blank=True, null=True)
     def __str__(self):
         return self.title
 class Reservation(models.Model):
@@ -52,9 +53,6 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.book.title} reserved by {self.user.username}"
-<<<<<<< HEAD
-
-=======
 class IssuedBooks(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     book = models.ForeignKey('Book', on_delete=models.CASCADE)
@@ -62,4 +60,3 @@ class IssuedBooks(models.Model):
     due_date = models.DateField()
     def __str__(self):
         return f"{self.book.title} issued to {self.user.username}"
->>>>>>> 0156e626997a3cebfa8d3fbbf379533abf54a9a2
