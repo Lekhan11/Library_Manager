@@ -17,8 +17,8 @@ class Users(AbstractUser):
 class StudentExtra(models.Model):
     user = models.OneToOneField(Users,on_delete=models.CASCADE)
     roll_no = models.CharField(max_length=20)
-    class_name = models.CharField(max_length=20)
-    section = models.CharField(max_length=20)
+    class_id = models.CharField(max_length=20,default=1)
+    section = models.CharField(max_length=20,default='A')
     def __str__(self):
         return self.roll_no
 class Category(models.Model):
@@ -52,4 +52,14 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.book.title} reserved by {self.user.username}"
+<<<<<<< HEAD
 
+=======
+class IssuedBooks(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    issue_date = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateField()
+    def __str__(self):
+        return f"{self.book.title} issued to {self.user.username}"
+>>>>>>> 0156e626997a3cebfa8d3fbbf379533abf54a9a2
