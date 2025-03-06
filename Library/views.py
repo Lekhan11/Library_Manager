@@ -40,3 +40,5 @@ def IssueBooks(request):
     return render(request, 'issue_books.html', context)
 def updateUser(request):
     return render(request, 'update.html')
+def addBook(request):
+    return render(request, 'addbooks.html')
