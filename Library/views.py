@@ -42,3 +42,5 @@ def updateUser(request):
     return render(request, 'update.html')
 def addBook(request):
     return render(request, 'addbooks.html')
+def addusers(request):
+    return render(request, 'addusers.html')
