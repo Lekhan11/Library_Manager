@@ -9,42 +9,40 @@
     <center>
         <h1>ISSUE DETAILS</h1>
     </center>
-    <form>
+    <form method="POST" action="">
+        {% csrf_token %}
         <center>
             <table>
                 <tr>
                     <td>Student Name:</td>
-                    <td><input type="text" placeholder="Enter Student Name"></td>
+                    <td><input type="text" name="studName" placeholder="Enter Student Name"></td>
                 </tr>
                 <tr>
                     <td>Roll No:</td>
-                    <td><input type="text" placeholder="Enter Roll No"></td>
+                    <td><input type="text" name="roll" placeholder="Enter Roll No"></td>
                 </tr>
 
                 <tr>
                     <td>Book Category:</td>
                     <td>
                         <select>
-                            <option>Tamil</option>
-                            <option>English</option>
-                            <option>Maths</option>
-                            <option>Science</option>
-                            <option>Social</option>
-                            <option>Story</option>
+                            {% for category in categories %}
+                            <option>{{ category }}</option>
+                            {% endfor %}
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <td>Book Id</td>
-                    <td><input type="text" placeholder="Enter Book Id"></td>
+                    <td><input type="text" name="book_id" placeholder="Enter Book Id"></td>
                 </tr>
                 <tr>
                     <td>Issue Date</td>
-                    <td><input type="date" placeholder=></td>
+                    <td><input type="date" name="issued_date" placeholder=></td>
                 </tr>
                 <tr>
                     <td>Due Date</td>
-                    <td><input type="date" placeholder=></td>
+                    <td><input type="date" name="due_date" placeholder=></td>
 
                 </tr>
 

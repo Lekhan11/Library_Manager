@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'LibraryManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'freedb_library1',
-        'USER' : 'freedb_lekhan10',
-        'PASSWORD' : 'Jww%9CGj6f**8@W',
-        'HOST' : 'sql.freedb.tech',
-        'PORT' : '3306',
+        'NAME': 'library_rubbersix',
+        'USER' : 'library_rubbersix',
+        'PASSWORD' : 'lekhan1210',
+        'HOST' : 'xi24z.h.filess.io',
+        'PORT' : '3307',
         
     }
 }
