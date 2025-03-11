@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'LibraryManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Library_olderthink',
-        'USER' : 'Library_olderthink',
-        'PASSWORD' : 'e749a873a36c78acfd2cbb3f3ea4e4ccb3373883',
-        'HOST' : 'rmg5d.h.filess.io',
+        'NAME': 'library_rubbersix',
+        'USER' : 'library_rubbersix',
+        'PASSWORD' : 'lekhan1210',
+        'HOST' : 'xi24z.h.filess.io',
         'PORT' : '3307',
         
     }
