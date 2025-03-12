@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Library',
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -77,11 +78,11 @@ WSGI_APPLICATION = 'LibraryManager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'library_rubbersix',
-        'USER' : 'library_rubbersix',
-        'PASSWORD' : 'lekhan1210',
-        'HOST' : 'xi24z.h.filess.io',
-        'PORT' : '3307',
+        'NAME': 'freedb_library-manage',
+        'USER' : 'freedb_lekhan1210',
+        'PASSWORD' : '?j$7aV337T#6R$h',
+        'HOST' : 'sql.freedb.tech',
+        'PORT' : '3306',
         
     }
 }

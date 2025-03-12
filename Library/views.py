@@ -30,17 +30,19 @@ def IssueBooks(request):
     }
     if request.method=='POST':
         roll_no = request.POST.get('roll_no')
-
         id = request.POST.get('book_id')
         issue_date = request.POST.get('issue_date')
         due_date = request.POST.get('due_date')
         save_issue = IssuedBooks(user=roll_no, book=id, issue_date=issue_date, due_date=due_date)  
         save_issue.save()   
         return render(request, 'issue_books.html', {'message': 'Book Issued Successfully'})
-    return render(request, 'issue_books.html', context)
+    return render(request, 'issue_books.html', context)\
+    
 def updateUser(request):
     return render(request, 'update.html')
+
 def addBook(request):
     return render(request, 'addbooks.html')
+
 def addusers(request):
     return render(request, 'addusers.html')

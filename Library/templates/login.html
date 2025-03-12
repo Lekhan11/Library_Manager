@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,24 +9,37 @@
     <style>
         body {
             background-color: #f8f9fa;
+
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            background-image: url('C:\Users\MOHANAPRIYA\OneDrive\Desktop\Library_Manager-2\lib.jpg');
+            background-size: cover;
+            background-position: center;
         }
+
+
         h1 {
-            text-align: center ;
+            text-align: center;
             margin-top: 100px;
             color: black;
         }
     </style>
 </head>
+
 <body>
-   <h1 class="text-">Login Page</h1>
-   <form action="" method="POST">
-   {% csrf_token %}
-   {% if error %}
-    <p style="color: red; text-align: center;">{{ error }}</p>
-    {% endif %}
-   <input type="text" placeholder="Username" class="form-control" name="username" style="width: 300px; margin-left: 40%; margin-top: 50px;">
-   <input type="password" placeholder="Password" class="form-control" name="password" style="width: 300px; margin-left: 40%; margin-top: 20px;">
-   <button class="btn btn-primary" style="margin-left: 48%; margin-top: 20px;">Login</button>
-   </form>
+    <h1 class="text-">Login Page</h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% if error %}
+        <p style="color: red; text-align: center;">{{ error }}</p>
+        {% endif %}
+        <input type="text" placeholder="Username" class="form-control" name="username"
+            style="width: 300px; margin-left: 40%; margin-top: 50px;">
+        <input type="password" placeholder="Password" class="form-control" name="password"
+            style="width: 300px; margin-left: 40%; margin-top: 20px;">
+        <button class="btn btn-primary" style="margin-left: 48%; margin-top: 20px;">Login</button>
+    </form>
 </body>
+
 </html>
