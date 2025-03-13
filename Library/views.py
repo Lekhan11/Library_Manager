@@ -21,6 +21,7 @@ def LoginPage(request):
 @login_required(login_url='login')
 def HomePage(request):
     return render(request, 'home.html')
+
 @login_required(login_url='login')
 def IssueBooks(request):
     context = {
@@ -36,7 +37,7 @@ def IssueBooks(request):
         save_issue = IssuedBooks(user=roll_no, book=id, issue_date=issue_date, due_date=due_date)  
         save_issue.save()   
         return render(request, 'issue_books.html', {'message': 'Book Issued Successfully'})
-    return render(request, 'issue_books.html', context)\
+    return render(request, 'issue_books.html', context)
     
 def updateUser(request):
     return render(request, 'update.html')
