@@ -6,10 +6,24 @@
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-
+    
 </head>
 <body >
-    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid p-2">
+            <a href="#" class="navbar-brand text-white">Library Management</a>
+                <ul class="navbar-nav ">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'add_users' %}" class="nav-link">Add Users</a>
+                </ul>
+
+        </div>
+
+
+    </nav>
 </body>
 </html>
 
