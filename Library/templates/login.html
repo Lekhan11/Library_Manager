@@ -29,19 +29,23 @@
     </style> --->
 </head>
 
-<body>
-    <h1 class="text-">Login Page</h1>
+<body">
+    <div class="container-sm">
+        <div class="">
+    <h1 class="text-center">Login Page</h1>
     <form action="" method="POST">
         {% csrf_token %}
         {% if error %}
         <p style="color: red; text-align: center;">{{ error }}</p>
         {% endif %}
         <input type="text" placeholder="Username" class="form-control" name="username"
-            style="width: 300px; margin-left: 40%; margin-top: 50px;">
+        style="width: 300px; margin-left: 40%; margin-top: 50px;">
         <input type="password" placeholder="Password" class="form-control" name="password"
-            style="width: 300px; margin-left: 40%; margin-top: 20px;">
+        style="width: 300px; margin-left: 40%; margin-top: 20px;">
         <button class="btn btn-primary" style="margin-left: 48%; margin-top: 20px;">Login</button>
     </form>
+    </div>
+</div>
 </body>
 
 </html>
