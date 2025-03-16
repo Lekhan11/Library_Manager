@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -9,7 +10,8 @@ def LoginPage(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user == None:
-            return render(request, 'login.html', {'error': 'Invalid Username or Password'})
+            messages.error(request, 'Invalid Username or Password')
+            return redirect('login')
         elif user:
             login(request, user)
             return redirect('home')
@@ -46,4 +48,22 @@ def addBook(request):
     return render(request, 'addbooks.html')
 
 def addusers(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        class_id = request.POST.get('class_id')
+        roll_no = request.POST.get('roll_no')
+        section = request.POST.get('section')
+        userName = Users(username=name)
+        userName.save()
+        user = Users.objects.get(username=name)
+        userinfo= StudentExtra(user=user, class_id=class_id, roll_no=roll_no, section=section)
+        userinfo.save()
+        try:
+           
+           
+            messages.success(request, 'User Added Successfully')
+            return redirect('add_users')
+        except:
+            messages.error(request, 'Error in adding user')
+            return redirect('add_users')
     return render(request, 'addusers.html')

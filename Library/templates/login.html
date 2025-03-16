@@ -8,44 +8,31 @@
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-    <!-- <style>
-    body {
-        background-color: #f8f9fa;
 
-            margin: 0;
-            font-family: Arial, sans-serif;
-            height: 100%;
-            background-image: url('C:\Users\MOHANAPRIYA\OneDrive\Desktop\Library_Manager-2\lib.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-
-
-        h1 {
-            text-align: center;
-            margin-top: 100px;
-            color: black;
-        }
-    </style> --->
 </head>
 
-<body">
-    <div class="container-sm">
-        <div class="">
-    <h1 class="text-center">Login Page</h1>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {% if error %}
-        <p style="color: red; text-align: center;">{{ error }}</p>
-        {% endif %}
-        <input type="text" placeholder="Username" class="form-control" name="username"
-        style="width: 300px; margin-left: 40%; margin-top: 50px;">
-        <input type="password" placeholder="Password" class="form-control" name="password"
-        style="width: 300px; margin-left: 40%; margin-top: 20px;">
-        <button class="btn btn-primary" style="margin-left: 48%; margin-top: 20px;">Login</button>
-    </form>
+<body class="d-flex justify-content-center align-items-center">
+<div class="card" style="margin:10%;">
+    <div class="card-header">
+        <h3>Login</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="">
+            {% csrf_token %}
+            {% bootstrap_messages %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
     </div>
 </div>
+
 </body>
 
 </html>
