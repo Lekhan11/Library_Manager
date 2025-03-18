@@ -74,16 +74,10 @@ WSGI_APPLICATION = 'LibraryManager.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'freedb_library-manage',
-        'USER' : 'freedb_lekhan1210',
-        'PASSWORD' : '?j$7aV337T#6R$h',
-        'HOST' : 'sql.freedb.tech',
-        'PORT' : '3306',
-        
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',  # SQLite database file in the base directory
     }
 }
 
@@ -131,4 +125,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'Library.Users'

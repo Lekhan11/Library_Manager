@@ -53,14 +53,10 @@ def addusers(request):
         class_id = request.POST.get('class_id')
         roll_no = request.POST.get('roll_no')
         section = request.POST.get('section')
-        userName = Users(username=name)
-        userName.save()
-        user = Users.objects.get(username=name)
-        userinfo= StudentExtra(user=user, class_id=class_id, roll_no=roll_no, section=section)
+        print(section)
+        userinfo= Students(name=name, class_id=class_id, roll_no=roll_no, section=section)
         userinfo.save()
         try:
-           
-           
             messages.success(request, 'User Added Successfully')
             return redirect('add_users')
         except:
