@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
@@ -53,13 +53,30 @@ def addusers(request):
         class_id = request.POST.get('class_id')
         roll_no = request.POST.get('roll_no')
         section = request.POST.get('section')
-        print(section)
-        userinfo= Students(name=name, class_id=class_id, roll_no=roll_no, section=section)
+        teacher_id = request.POST.get('teacher_id')
+        department = request.POST.get('department')
+        if name != '' and class_id != '' and roll_no != '' and section != '':
+            if Students.objects.filter(roll_no=roll_no).exists():
+                messages. error(request, 'User already exists')
+                return redirect('add_users')
+            userinfo= Students(name=name, class_id=class_id, roll_no=roll_no, section=section)
+        elif teacher_id != '' and department != '':
+            if Teacher.objects.filter(teacher_id=teacher_id).exists():
+                messages. error(request, 'User already exists')
+                return redirect('add_users')
+            userinfo= Teacher(name=name, teacher_id=teacher_id, department=department)
+        else:
+            messages. error(request, 'All fields are required')
+            return redirect('add_users')
         userinfo.save()
         try:
             messages.success(request, 'User Added Successfully')
             return redirect('add_users')
         except:
-            messages.error(request, 'Error in adding user')
+            messages. error(request, 'Error in adding user')
             return redirect('add_users')
-    return render(request, 'addusers.html')
+    return render(request, 'addusers.html')\
+
+def Logout(request):
+    logout(request)
+    return render(request, 'login.html')
