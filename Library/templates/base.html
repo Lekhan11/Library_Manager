@@ -7,49 +7,58 @@
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <title>{% block title %} {% endblock %}</title>
+    <title>{% block title %}Library Management{% endblock %}</title>
 </head>
 <body>
     <div class="container-fluid bg-dark">
-<nav class="navbar navbar-dark">
-    <button class="navbar-toggler  d-block"  type="button" data-bs-toggle="offcanvas" data-bs-target="#collapseContent"><i class="bi bi-list"></i></button>
-<a href="{%url 'home'%}" class="navbar-brand me-auto ps-2">Library Management</a>
-<a class="text-white nav-link ms-auto" href="{%url 'logout'%}">Logout</a>
-</div>
-</nav>
-<div class="col-2">
-<div class="col-2">
-    <div class="offcanvas offcanvas-start" id="collapseContent">
-        <div class="offcanvas-header bg-dark text-white"> 
-        <h5 class="offcanvas-title">Menu</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <nav class="navbar navbar-dark">
+            <button class="navbar-toggler d-block" type="button" data-bs-toggle="offcanvas" data-bs-target="#collapseContent" aria-controls="collapseContent">
+                <i class="bi bi-list"></i>
+            </button>
+            <a href="{% url 'home' %}" class="navbar-brand me-auto ps-2">Library Management</a>
+            <a class="text-white nav-link ms-auto" href="{% url 'logout' %}">Logout</a>
+        </nav>
+
+        <div class="offcanvas offcanvas-start" id="collapseContent" tabindex="-1" aria-labelledby="collapseContentLabel">
+            <div class="offcanvas-header bg-dark text-white">
+                <h5 class="offcanvas-title" id="collapseContentLabel">Menu</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    
+                    <!-- Manage Users Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Manage Users
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="{% url 'add_users' %}">Add Users</a></li>
+                            <li><a class="dropdown-item" href="{% url 'view_users' %}">View Users</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Manage Books Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Manage Books
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                            <li><a class="dropdown-item" href="#">Add Books</a></li>
+                            <li><a class="dropdown-item" href="#">Issue Books</a></li>
+                            <li><a class="dropdown-item" href="#">Return Books</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="offcanvas-body">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'add_users' %}">Add Users</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'issue_books' %}">Issue Books</a>
-            </li>
-           
-        </ul>
 
-
-    </div>
-</div>
-</div>
-</div>
-</div>
-
-<div class="d-flex justify-content-center align-items-center mt-5">
-    {% block content %}
-
-    {% endblock %}
+    <div class="d-flex justify-content-center align-items-center mt-5">
+        {% block content %}{% endblock %}
     </div>
 </body>
-
 </html>

@@ -75,8 +75,23 @@ def addusers(request):
         except:
             messages. error(request, 'Error in adding user')
             return redirect('add_users')
+    
     return render(request, 'addusers.html')\
 
 def Logout(request):
     logout(request)
-    return render(request, 'login.html')
+    return redirect('login')
+
+def viewUsers(request):
+    students = Students.objects.all()
+    teachers = Teacher.objects.all()
+    return render(request, 'viewusers.html', {'students': students, 'teachers': teachers})
+
+def deleteUser(request, id):
+    try:
+        user = Students.objects.get(id=id)
+        user.delete()
+        messages.success(request, 'User Deleted Successfully')
+    except:
+        messages.error(request, 'Error in deleting user')
+    return redirect('view_users')
