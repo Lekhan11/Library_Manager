@@ -10,6 +10,6 @@ path('add_book/', addBook, name='add_book'),
 path('add_users/', addusers, name='add_users'),
 path('logout/', Logout, name='logout'),
 path('view_users/', viewUsers, name='view_users'),
-path('view_users/update/<int:id>/', updateUser, name='update_user'),
-path('view_users/delete/<int:id>/', deleteUser, name='delete_user'),
+path('view_users/update/<str:role>/<int:id>/', updateUser, name='update_user'),
+path('view_users/delete/<str:role>/<int:id>/', deleteUser, name='delete_user'),
 ]
