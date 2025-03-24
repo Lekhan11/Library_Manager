@@ -95,3 +95,22 @@ def deleteUser(request, id):
     except:
         messages.error(request, 'Error in deleting user')
     return redirect('view_users')
+
+def updateUser(request,id):
+    user = Students.objects.get(id=id)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        class_id = request.POST.get('class_id')
+        roll_no = request.POST.get('roll_no')
+        section = request.POST.get('section')
+        if name == '' or class_id == '' or roll_no == '' or section == '':
+            messages.error(request, 'All fields are required')
+            return redirect('view_users')
+        user.name = name
+        user.class_id = class_id
+        user.roll_no = roll_no
+        user.section = section
+        user.save()
+        messages.success(request, 'User Updated Successfully')
+        return redirect('view_users')
+    return redirect('view_users')

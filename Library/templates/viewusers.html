@@ -2,27 +2,15 @@
 {% block title %}View Users{% endblock %}
 {% block content %}
 
-<!-- templates/view_users.html -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Users</title>
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-</head>
-<body>
     <div class="container mt-5">
         
        <h1>View Users</h1>
        {% if messages %}
-            <div class="alert alert-info">
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
                 {% for message in messages %}
                     <p>{{ message }}</p>
                 {% endfor %}
-                <button type="button" class="btn-close position-absolute top-0 end-0" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endif %}
 
@@ -45,9 +33,45 @@
                     <td>{{ user.name }}</td>
                     <td>{{ user.class_id }}</td>
                     <td>{{ user.section }}</td>
-                    <td> <a href="{% url 'update_user' user.id %}" class="btn btn-primary">Update</a></td>
+                    <td> <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">Update</button></td>
                     <td><a href="{% url 'delete_user' user.id %}" class="btn btn-danger">Delete</a></td>
                 </tr>
+                <div class="modal" id="editUserModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title">Edit user</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form  method="post" action="{% url 'update_user' user.id %}">
+                                    {% csrf_token %}
+                                  <div class="mb-3">
+                                    <label for="editName" class="col-form-label">Name :</label>
+                                    <input type="text" class="form-control" id="editUser" name="name" value={{user.name}}>
+                                  </div>
+                                    <div class="mb-3">
+                                        <label for="editClass" class="col-form-label">Class :</label>
+                                        <input type="text" class="form-control" id="editClass" name="class_id" value={{user.class_id}}>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editSection" class="col-form-label">Section :</label>
+                                        <input type="text" class="form-control" id="editSection" name="section" value={{user.section}}>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editRoll" class="col-form-label">Roll No</label>
+                                        <input type="text" class="form-control" id="editRoll" name="roll_id" value={{user.roll_no}}>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button class="btn btn-primary" type="submit">Confirm</button>
+                                      </div>
+                                </form>
+                        </div>
+                        
+                    </div>
+                      </div>
+            </div>
                 {% empty %}
                 <tr>
                     <td colspan="5">No users found.</td>
@@ -55,9 +79,7 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-</body>
-</html>
+
 
 
 {% endblock %}
