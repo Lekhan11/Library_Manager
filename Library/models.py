@@ -6,17 +6,17 @@ class Students(models.Model):
     roll_no = models.CharField(max_length=10)
     class_id = models.CharField(max_length=10)
     section =  models.CharField(max_length=10)
-    def __str__(self):
+    def _str_(self):
         return self.name
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
     teacher_id = models.CharField(max_length=10)
     department = models.CharField(max_length=100)
-    def __str__(self):
+    def _str_(self):
         return self.name
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    def __str__(self):
+    def _str_(self):
         return self.name
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -28,7 +28,7 @@ class Book(models.Model):
     STATUS_CHOICES = [("Available", "Available"), ("Issued", "Issued"), ("Reserved", "Reserved")]
     availability_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Available")
     isbn = models.CharField(max_length=20, blank=True, null=True)
-    def __str__(self):
+    def _str_(self):
         return self.title
 class Reservation(models.Model):
     STATUS_CHOICES = [
@@ -44,12 +44,15 @@ class Reservation(models.Model):
     expiry_date = models.DateField()
 
 
-    def __str__(self):
+    def _str_(self):
         return f"{self.book.title} reserved by {self.user.username}"
-class IssuedBooks(models.Model):
+
+class IssueBooks(models.Model):
     user = models.ForeignKey(Students, on_delete=models.CASCADE)
-    book = models.ForeignKey('Book', on_delete=models.CASCADE)
-    issue_date = models.DateTimeField(auto_now_add=True)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    issued_date = models.DateField(auto_now_add=True)
     due_date = models.DateField()
+    returned_date = models.DateField(null=True, blank=True)
+
     def __str__(self):
-        return f"{self.book.title} issued to {self.user.username}"
+        return f"{self.book.title} issued to {self.student.user.get_full_name()}"
