@@ -2,49 +2,55 @@
 {% block title %}View Users{% endblock %}
 {% block content %}
 
-    <center>
-          <h1 class='text-center'>Enter Book Details</h1>
-    </center>
-         <form action="/addbooks" method="POST">
+<div class="card">
+    <div class="card-header">
+        <h3 class="text-center">Add Books</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="">
             {% csrf_token %}
-              <div class="container">
-                <center>
-                <table>
-                    <tr>
-                        <td>Book Name:</td>
-                        <td><input type="text" name="book_name" placeholder="Enter Book Name"></td>
-                    </tr>
-                    <tr>
-                        <td>ISBN Code:</td>
-                        <td>
-                            <input type="text" name="isbn" placeholder="Enter ISBN">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Author:</td>
-                        <td><input type="text" name="author" placeholder="Enter Author Name"></td>
-                    </tr>
-                    <tr>
-                        <td>Category:</td>
-                        <td>
-                            <select name="category">
-                                {% for category in categories %}
-                                <option>{{ category }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Quantity:</td>
-                        <td><input type="text" name="quantity" placeholder="Enter Quantity"></td>
-                    </tr>
-                    <tr>
-                        <td><button style="border-radius: 50%;">Reset</button>
-                        <button>Submit</button></td>
-                    </tr>
-                </table>
-                </center>
-              </div>
-                               
-            </form>
+            {% if messages %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <div class="mb-3">
+                <label for="book_id" class="form-label">Book ID :</label>
+                <input type="text" class="form-control" id="book_id" name="book_id">
+            </div>
+
+            <div class="mb-3">
+                <label for="book_name" class="form-label">Book Name :</label>
+                <input type="text" class="form-control" id="book_name" name="book_name">
+            </div>
+
+            <div class="mb-3">
+                <label for="author" class="form-label">Author :</label>
+                <input type="text" class="form-control" id="author" name="author">
+            </div>
+
+            <div class="mb-3">
+                <label for="publication" class="form-label">Publication :</label>
+                <input type="text" class="form-control" id="publication" name="publication">
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">Category :</label>
+                <input type="text" class="form-control" id="category" name="category">
+            </div>
+
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity :</label>
+                <input type="text" class="form-control" id="quantity" name="quantity">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Book</button>
+        </form>
+    </div>
+</div>
+ 
 {% endblock %}

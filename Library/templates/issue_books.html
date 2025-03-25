@@ -1,70 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Issue Details</title>
-</head>
-<style>
-    body {
-        background-color: #f8f9fa;
+{% extends 'base.html' %}
+{% block title %}View Users{% endblock %}
+{% block content %}
 
-        margin: 0;
-        font-family: Arial, sans-serif;
-        height: 100%;
-        background-image: url('C:\Users\MOHANAPRIYA\OneDrive\Desktop\Library_Manager-2\lib.jpg');
-        background-size: cover;
-        background-position: center;
-    }
-</style
-<body style="font-size: x-large;">
-    <center>
-        <h1>ISSUE DETAILS</h1>
-    </center>
-    <form method="POST" action="">
-        {% csrf_token %}
-        <center>
-            <table>
-                <tr>
-                    <td>Student Name:</td>
-                    <td><input type="text" name="studName" placeholder="Enter Student Name"></td>
-                </tr>
-                <tr>
-                    <td>Roll No:</td>
-                    <td><input type="text" name="roll" placeholder="Enter Roll No"></td>
-                </tr>
+<div class="card">
+    <div class="card-header">
+        <h3 class="text-center">Issue Books</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="">
+            {% csrf_token %}
+            {% if messages %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
 
-                <tr>
-                    <td>Book Category:</td>
-                    <td>
-                        <select>
-                            {% for category in categories %}
-                            <option>{{ category }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Book Id</td>
-                    <td><input type="text" name="book_id" placeholder="Enter Book Id"></td>
-                </tr>
-                <tr>
-                    <td>Issue Date</td>
-                    <td><input type="date" name="issued_date" placeholder=></td>
-                </tr>
-                <tr>
-                    <td>Due Date</td>
-                    <td><input type="date" name="due_date" placeholder=></td>
+            <div class="mb-3">
+                <label for="book_id" class="form-label">Book ID :</label>
+                <input type="text" class="form-control" id="book_id" name="book_id">
+            </div>
 
-                </tr>
+            <div class="mb-3">
+                <label for="user_id" class="form-label">User ID :</label>
+                <input type="text" class="form-control" id="user_id" name="user_id">
+            </div>
 
-                <tr align="center">
-                    <td><button style="border-radius: 50;">Reset</button>
+            <div class="mb-3">
+                <label for="issue_date" class="form-label">Issue Date :</label>
+                <input type="date" class="form-control" id="issue_date" name="issue_date">
+            </div>
 
-                        <button>Submit</button>
-                    </td>
-                </tr>
-    </form>
-    </center>
-</body>
-</html>
+            <div class="mb-3">
+                <label for="return_date" class="form-label">Return Date :</label>
+                <input type="date" class="form-control" id="return_date" name="return_date">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Issue Book</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
