@@ -26,14 +26,20 @@ def HomePage(request):
 
 @login_required(login_url='login')
 def IssueBooks(request):
-    student = models.ForeignKey(StudentExtra, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    issued_date = models.DateField(auto_now_add=True)
-    due_date = models.DateField()
-    returned_date = models.DateField(null=True, blank=True)
-
-    def _str_(self):
-        return f"{self.book.title} issued to {self.student.user.get_full_name()}"
+    context = {
+        'books': Book.objects.all(),
+        'students': StudentExtra.objects.all(),
+        'categories': Category.objects.all()
+    }
+    if request.method=='POST':
+        roll_no = request.POST.get('roll_no')
+        id = request.POST.get('book_id')
+        issue_date = request.POST.get('issue_date')
+        due_date = request.POST.get('due_date')
+        save_issue = IssuedBooks(user=roll_no, book=id, issue_date=issue_date, due_date=due_date)  
+        save_issue.save()   
+        return render(request, 'issue_books.html', {'message': 'Book Issued Successfully'})
+    return render(request, 'issue_books.html', context)
     
 def updateUser(request):
     return render(request, 'update.html')
