@@ -134,3 +134,30 @@ def updateUser(request,role,id):
             messages.success(request, 'User Updated Successfully')
         return redirect('view_users')
     return redirect('view_users')
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.contrib import messages
+
+# View to handle book return
+def returnBook(request):
+    if request.method == "POST":
+        # Retrieve form data
+        student_id = request.POST.get('studentId')
+        book_id = request.POST.get('bookId')
+        return_date = request.POST.get('returnDate')
+        book_condition = request.POST.get('bookCondition')
+
+        # You can now process the return (e.g., update the database, check conditions, etc.)
+        # For example, check if the book exists in the library system
+        # and update the database to mark it as returned.
+
+        # Assume the return is successful (you should add your actual logic)
+        messages.success(request, "The book has been successfully returned!")
+
+        # Redirect to the same page with a success message
+        return render(request, 'returnBook.html')
+    else:
+        return render(request, 'returnBook.html')
+
+
+
