@@ -28,7 +28,7 @@ def HomePage(request):
 def IssueBooks(request):
     context = {
         'books': Book.objects.all(),
-        'students': StudentExtra.objects.all(),
+        'students': Students.objects.all(),
         'categories': Category.objects.all()
     }
     if request.method=='POST':
