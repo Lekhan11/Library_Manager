@@ -48,7 +48,7 @@ class Reservation(models.Model):
         return f"{self.book.title} reserved by {self.user.username}"
 
 class IssueBooks(models.Model):
-    user = models.ForeignKey(Students, on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     issued_date = models.DateField(auto_now_add=True)
     due_date = models.DateField()
