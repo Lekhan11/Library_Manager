@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}View Users{% endblock %}
+{% block content %}
+
+    <div class="container mt-5">
+        <h1 class="text-center">View Users</h1>
+
+        <!-- Display messages -->
+        {% if messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        <!-- Tab Navigation -->
+        <ul class="nav nav-pills" id="userTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="student-tab" data-bs-toggle="pill" href="#studentFields" role="tab" aria-controls="studentFields" aria-selected="true">Students</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="teacher-tab" data-bs-toggle="pill" href="#teacherFields" role="tab" aria-controls="teacherFields" aria-selected="false">Teachers</a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-4" id="userTabsContent">
+            <!-- Students Tab -->
+            <div class="tab-pane fade show active" id="studentFields" role="tabpanel" aria-labelledby="student-tab">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Name</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in students %}
+                        <tr>
+                            <td>{{ user.roll_no }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.class_id }}</td>
+                            <td>{{ user.section }}</td>
+                            <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ user.id }}">Update</button></td>
+                            <td><a href="{% url 'delete_user' 'student' user.id %}" class="btn btn-danger">Delete</a></td>
+                        </tr>
+                        <div class="modal" id="editUserModal{{ user.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Edit user</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" action="{% url 'update_user' 'student' user.id %}">
+                                            {% csrf_token %}
+                                            <div class="mb-3">
+                                                <label for="editName" class="col-form-label">Name :</label>
+                                                <input type="text" class="form-control" id="editUser" name="name" value="{{ user.name }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editClass" class="col-form-label">Class :</label>
+                                                <input type="text" class="form-control" id="editClass" name="class_id" value="{{ user.class_id }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editSection" class="col-form-label">Section :</label>
+                                                <input type="text" class="form-control" id="editSection" name="section" value="{{ user.section }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editRoll" class="col-form-label">Roll No</label>
+                                                <input type="text" class="form-control" id="editRoll" name="roll_no" value="{{ user.roll_no }}">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button class="btn btn-primary" type="submit">Confirm</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No users found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Teachers Tab -->
+            <div class="tab-pane fade" id="teacherFields" role="tabpanel" aria-labelledby="teacher-tab">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Staff Id</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in teachers %}
+                        <tr>
+                            <td>{{ user.teacher_id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.department }}</td>
+                            <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ user.id }}">Update</button></td>
+                            <td><a href="{% url 'delete_user' 'teacher' user.id %}" class="btn btn-danger">Delete</a></td>
+                        </tr>
+                        <div class="modal" id="editTeacherModal{{ user.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Edit user</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" action="{% url 'update_user' 'teacher' user.id %}">
+                                            {% csrf_token %}
+                                            <div class="mb-3">
+                                                <label for="editName" class="col-form-label">Name :</label>
+                                                <input type="text" class="form-control" id="editName" name="name" value="{{ user.name }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editDprt" class="col-form-label">Department :</label>
+                                                <input type="text" class="form-control" id="editDprt" name="department" value="{{ user.department }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editID" class="col-form-label">Staff ID :</label>
+                                                <input type="text" class="form-control" id="editID" name="teacher_id" value="{{ user.teacher_id }}">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button class="btn btn-primary" type="submit">Confirm</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No users found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
