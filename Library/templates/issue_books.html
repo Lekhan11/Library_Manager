@@ -1,50 +1,70 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Details</title>
+</head>
+<style>
+    body {
+        background-color: #f8f9fa;
 
-{% block title %}Issue Details{% endblock %}
-
-{% block content %}
-<div class="form-container">
-    <h1 style="text-align: center;">ISSUE DETAILS</h1>
+        margin: 0;
+        font-family: Arial, sans-serif;
+        height: 100%;
+        background-image: url('C:\Users\MOHANAPRIYA\OneDrive\Desktop\Library_Manager-2\lib.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+</style
+<body style="font-size: x-large;">
+    <center>
+        <h1>ISSUE DETAILS</h1>
+    </center>
     <form method="POST" action="">
         {% csrf_token %}
-        <table>
-            <tr>
-                <td>Student Name:</td>
-                <td><input type="text" name="studentName" placeholder="Enter Student Name" required></td>
-            </tr>
-            <tr>
-                <td>Roll No:</td>
-                <td><input type="text" name="roll" placeholder="Enter Roll No" required></td>
-            </tr>
-            <tr>
-                <td>Book Category:</td>
-                <td>
-                    <select name="category" required>
-                        <option value="" disabled selected>Select Category</option>
-                        {% for category in categories %}
-                            <option value="{{ category }}">{{ category }}</option>
-                        {% endfor %}
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Book ID:</td>
-                <td><input type="text" name="book_id" placeholder="Enter Book ID" required></td>
-            </tr>
-            <tr>
-                <td>Issue Date:</td>
-                <td><input type="date" name="issued_date" required></td>
-            </tr>
-            <tr>
-                <td>Due Date:</td>
-                <td><input type="date" name="due_date" required></td>
-            </tr>
-            <tr align="center">
-                <td colspan="2">
-                    <button type="submit" class="submit-btn">Submit</button>
-                </td>
-            </tr>
-        </table>
+        <center>
+            <table>
+                <tr>
+                    <td>Student Name:</td>
+                    <td><input type="text" name="studName" placeholder="Enter Student Name"></td>
+                </tr>
+                <tr>
+                    <td>Roll No:</td>
+                    <td><input type="text" name="roll" placeholder="Enter Roll No"></td>
+                </tr>
+
+                <tr>
+                    <td>Book Category:</td>
+                    <td>
+                        <select>
+                            {% for category in categories %}
+                            <option>{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Book Id</td>
+                    <td><input type="text" name="book_id" placeholder="Enter Book Id"></td>
+                </tr>
+                <tr>
+                    <td>Issue Date</td>
+                    <td><input type="date" name="issued_date" placeholder=></td>
+                </tr>
+                <tr>
+                    <td>Due Date</td>
+                    <td><input type="date" name="due_date" placeholder=></td>
+
+                </tr>
+
+                <tr align="center">
+                    <td><button style="border-radius: 50;">Reset</button>
+
+                        <button>Submit</button>
+                    </td>
+                </tr>
     </form>
-</div>
-{% endblock %}
+    </center>
+</body>
+</html>
