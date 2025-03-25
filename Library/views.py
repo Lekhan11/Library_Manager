@@ -81,11 +81,50 @@ def viewUsers(request):
     teachers = Teacher.objects.all()
     return render(request, 'viewusers.html', {'students': students, 'teachers': teachers})
 
-def deleteUser(request, id):
+def deleteUser(request, role,id):
     try:
-        user = Students.objects.get(id=id)
+        if role == 'teacher':
+            user = Teacher.objects.get(id=id)
+        else:
+            user = Students.objects.get(id=id)
         user.delete()
         messages.success(request, 'User Deleted Successfully')
     except:
         messages.error(request, 'Error in deleting user')
+    return redirect('view_users')
+
+def updateUser(request,role,id):
+    if role == 'teacher':
+        user = Teacher.objects.get(id=id)
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            teacher_id = request.POST.get('teacher_id')
+            department = request.POST.get('department')
+            if name == '' or teacher_id == '' or department == '':
+                messages.error(request, 'All fields are required')
+                return redirect('view_users')
+            user.name = name
+            user.teacher_id = teacher_id
+            user.department = department
+            user.save()
+            messages.success(request, 'User Updated Successfully')
+        return redirect('view_users')
+    else:
+        user = Students.objects.get(id=id)
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            class_id = request.POST.get('class_id')
+            roll_no = request.POST.get('roll_no')
+            print(request.POST)
+            section = request.POST.get('section')
+            if name == '' or class_id == '' or roll_no == '' or section == '':
+                messages.error(request, 'All fields are required')
+                return redirect('view_users')
+            user.name = name
+            user.class_id = class_id
+            user.roll_no = roll_no
+            user.section = section
+            user.save()
+            messages.success(request, 'User Updated Successfully')
+        return redirect('view_users')
     return redirect('view_users')

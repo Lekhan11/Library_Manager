@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block title %}Add Books{% endblock %}
@@ -70,3 +71,55 @@
     </div>
 </div>
 {% endblock %}
+=======
+{% extends 'base.html' %}
+{% block title %}View Users{% endblock %}
+{% block content %}
+
+    <center>
+          <h1 class='text-center'>Enter Book Details</h1>
+    </center>
+         <form action="/addbooks" method="POST">
+            {% csrf_token %}
+              <div class="container">
+                <center>
+                <table>
+                    <tr>
+                        <td>Book Name:</td>
+                        <td><input type="text" name="book_name" placeholder="Enter Book Name"></td>
+                    </tr>
+                    <tr>
+                        <td>ISBN Code:</td>
+                        <td>
+                            <input type="text" name="isbn" placeholder="Enter ISBN">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Author:</td>
+                        <td><input type="text" name="author" placeholder="Enter Author Name"></td>
+                    </tr>
+                    <tr>
+                        <td>Category:</td>
+                        <td>
+                            <select name="category">
+                                {% for category in categories %}
+                                <option>{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Quantity:</td>
+                        <td><input type="text" name="quantity" placeholder="Enter Quantity"></td>
+                    </tr>
+                    <tr>
+                        <td><button style="border-radius: 50%;">Reset</button>
+                        <button>Submit</button></td>
+                    </tr>
+                </table>
+                </center>
+              </div>
+                               
+            </form>
+{% endblock %}
+>>>>>>> 4dbde9c1e01395f163c72761a69fc5b4e915fa92
