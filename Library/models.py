@@ -22,11 +22,9 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=100)
     publisher = models.CharField(max_length=100)
-    edition = models.CharField(max_length=50,blank=True,null=True)
     quantity = models.IntegerField()
     categories = models.ManyToManyField(Category, related_name='books')
-    STATUS_CHOICES = [("Available", "Available"), ("Issued", "Issued"), ("Reserved", "Reserved")]
-    availability_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Available")
+    availability_status = models.CharField(max_length=10, default="Available")
     isbn = models.CharField(max_length=20, blank=True, null=True)
     def __str__(self):
         return self.title

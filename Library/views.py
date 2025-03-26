@@ -41,11 +41,52 @@ def IssueBooks(request):
         return render(request, 'issue_books.html', {'message': 'Book Issued Successfully'})
     return render(request, 'issue_books.html', context)
     
-def updateUser(request):
-    return render(request, 'update.html')
-
 def addBook(request):
-    return render(request, 'addbooks.html')
+    context = {
+        'categories': Category.objects.all()
+    }
+    if request.method=="POST":
+        book_name=request.POST.get('book_name')
+        author=request.POST.get('author')
+        isbn=request.POST.get('isbn_code')
+        publications=request.POST.get('publications')
+        quantity=request.POST.get('quantity')
+        new_category=request.POST.get('new_category')
+        category = request.POST.get('category')
+        print(new_category)
+        if new_category:
+            if Category.objects.filter(name=new_category).exists():
+                messages. error(request, 'Category already exists')
+                return redirect('add_book')
+            else:
+                categoryInfo = Category(name=new_category)
+                categoryInfo.save()
+                messages.error(request, 'Category Added Succesfully')
+                return redirect('add_book')
+        elif all([book_name, author, isbn, publications, quantity, category]):
+            if Book.objects.filter(isbn=isbn).exists():
+                messages. error(request, 'Book ID already exists')
+                return redirect('add_book')
+            try:
+                bookInfo = Book.objects.create(
+                title=book_name,
+                author=author,
+                isbn=isbn,
+                publisher=publications,
+                quantity=quantity
+            )
+           
+                bookInfo.categories.set(category)
+                messages.success(request, 'Book Added Successfully')
+                return redirect('add_book')
+            except Exception as e:
+                print(e)
+                messages.error(request, 'Error in adding book')
+                return redirect('add_book')
+        else:
+            messages. error(request, 'All fields are required')
+            return redirect('add_book')
+    return render(request, 'addbooks.html',context)
 
 def addusers(request):
     if request.method == 'POST':
@@ -68,15 +109,15 @@ def addusers(request):
         else:
             messages. error(request, 'All fields are required')
             return redirect('add_users')
-        userinfo.save()
         try:
+            userinfo.save()
             messages.success(request, 'User Added Successfully')
             return redirect('add_users')
         except:
             messages. error(request, 'Error in adding user')
             return redirect('add_users')
     
-    return render(request, 'addusers.html')\
+    return render(request, 'addusers.html')
 
 def Logout(request):
     logout(request)

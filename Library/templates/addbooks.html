@@ -2,11 +2,14 @@
 {% block title %}View Users{% endblock %}
 {% block content %}
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="text-center">Add Books</h3>
+<div class="card container-fluid">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="text-center" style="padding-left: 45%;">Add Books</h3>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategory" aria-hidden="true">Add Category</button>
     </div>
+
     <div class="card-body">
+        <!-- Add Book Form -->
         <form method="POST" action="">
             {% csrf_token %}
             {% if messages %}
@@ -20,7 +23,7 @@
 
             <div class="mb-3">
                 <label for="book_id" class="form-label">Book ID :</label>
-                <input type="text" class="form-control" id="book_id" name="book_id">
+                <input type="text" class="form-control" id="book_id" name="isbn_code">
             </div>
 
             <div class="mb-3">
@@ -35,12 +38,17 @@
 
             <div class="mb-3">
                 <label for="publication" class="form-label">Publication :</label>
-                <input type="text" class="form-control" id="publication" name="publication">
+                <input type="text" class="form-control" id="publication" name="publications">
             </div>
 
             <div class="mb-3">
                 <label for="category" class="form-label">Category :</label>
-                <input type="text" class="form-control" id="category" name="category">
+                <select name="category" id="category" class="form-control">
+                    <option selected disabled>Select The Category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="mb-3">
@@ -52,5 +60,30 @@
         </form>
     </div>
 </div>
- 
+
+<!-- Add Category Modal -->
+<div class="modal" id="addCategory">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h3 class="modal-title">Add Category</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="new_category" class="form-label">New Category:</label>
+                        <input type="text" class="form-control" id="new_category" name="new_category" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
