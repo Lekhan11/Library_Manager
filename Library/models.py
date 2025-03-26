@@ -6,12 +6,18 @@ class Students(models.Model):
     roll_no = models.CharField(max_length=10)
     class_id = models.CharField(max_length=10)
     section =  models.CharField(max_length=10)
+    books_issued = models.IntegerField(default=0)
+    books_returned = models.IntegerField(default=0)
+    books_pending = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
     teacher_id = models.CharField(max_length=10)
     department = models.CharField(max_length=100)
+    books_issued = models.IntegerField(default=0)
+    books_returned = models.IntegerField(default=0)
+    books_pending = models.IntegerField(default=0)
     def __str__(self):
         return self.name
 class Category(models.Model):
@@ -22,7 +28,7 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=100)
     publisher = models.CharField(max_length=100)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=0)
     categories = models.ManyToManyField(Category, related_name='books')
     availability_status = models.CharField(max_length=10, default="Available")
     isbn = models.CharField(max_length=20, blank=True, null=True)

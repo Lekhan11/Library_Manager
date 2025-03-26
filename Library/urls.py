@@ -13,4 +13,7 @@ path('view_users/', viewUsers, name='view_users'),
 path('view_users/update/<str:role>/<int:id>/', updateUser, name='update_user'),
 path('view_users/delete/<str:role>/<int:id>/', deleteUser, name='delete_user'),
 path('return/', returnBook,name='return'),
+path('view_books/', viewBooks, name='view_books'),
+#path('view_books/delete/<int:id>/', deleteBook, name='delete_book'),
+#path('view_books/update/<int:id>/', updateBook, name='update_book'),
 ]
