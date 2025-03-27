@@ -6,5 +6,4 @@ from .models import *
 admin.site.register(Students)
 admin.site.register(Category)
 admin.site.register(Book)
-admin.site.register(Reservation)
 admin.site.register(IssuedBooks)

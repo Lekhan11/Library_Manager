@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Return Books{% endblock %}
+{% block content %}
+
+<div class="card">
+  <div class="card-header">
+    <h3 class="text-center">Return Books</h3>
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{%url 'return_book'%}">
+      {% csrf_token %}
+      {% if messages %}
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
+          {% for message in messages %}
+          <p>{{ message }}</p>
+          {% endfor %}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+      <div class="mb-3">
+        <label for="bookId" class="form-label">Book ID</label>
+        <input type="text" class="form-control" id="bookId" name="book_id">
+      </div>
+      
+      <div class="mb-3">
+        <label for="studentId" class="form-label">User ID</label>
+        <input type="text" class="form-control" id="studentId" name="user_id">
+      </div>
+      
+      <div class="mb-3">
+        <label for="return_date" class="form-label">Return Date</label>
+        <input type="date" class="form-control" id="returnDate" name="returnDate">
+      </div>
+
+      <div class="mb-3">
+        <label for="condition" class="form-label">Book Condition</label>
+        <select name="condition" id="bookCondition" class="form-select">
+          <option selected disabled>Select The Condition</option>
+          <option value="Good">Good</option>
+          <option value="Damaged">Damaged</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Return</button>
+      </div>
+      </form>
+  </div>
+</div>
+
+{% endblock %}

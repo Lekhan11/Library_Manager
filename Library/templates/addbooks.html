@@ -43,7 +43,7 @@
 
             <div class="mb-3">
                 <label for="category" class="form-label">Category :</label>
-                <select name="category" id="category" class="form-control">
+                <select name="category" id="category" class="form-select">
                     <option selected disabled>Select The Category</option>
                     {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.name }}</option>
