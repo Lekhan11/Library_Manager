@@ -204,6 +204,9 @@ def returnBook(request):
         book_id = request.POST.get('book_id')
         return_date = request.POST.get('returnDate')
         book_condition = request.POST.get('condition')
+        if not Book.objects.filter(isbn=book_id).exists():
+            messages.error(request, 'Book not found')
+            return redirect('return_book')
         if Students.objects.filter(roll_no=user_id).exists():
             user = Students.objects.get(roll_no=user_id)
         elif Teacher.objects.filter(teacher_id=user_id).exists():
@@ -215,6 +218,10 @@ def returnBook(request):
             messages.error(request, 'All fields are required')
             return redirect('return_book')
         else:
+            issued_book = IssuedBooks.objects.filter(user=user.id, book=Book.objects.get(isbn=book_id)).first()
+            if not issued_book:
+                messages.error(request, 'Book not issued to this user')
+                return redirect('return_book')
             returnBook = ReturnedBooks(user=user, book=Book.objects.get(isbn=book_id), return_date=return_date ,condition=book_condition)
             returnBook.save()
             if user.books_pending <= 0:
@@ -234,5 +241,8 @@ def returnBook(request):
     else:
         return render(request, 'returnBook.html')
 
-
+def  viewBooks(request):
+    books = Book.objects.all()
+    categories = Category.objects.all()
+    return render(request, 'view_books.html', {'books': books, 'categories': categories})
 

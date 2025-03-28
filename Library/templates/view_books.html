@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}View Books{% endblock %}
+{% block content %}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Book ID</th>
+            <th>Book Name</th>
+            <th>Author</th>
+            <th>Publication</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.isbn }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.publisher }}</td>
+            <td>
+                {% if book.categories %}
+                    {% for category in book.categories.all %}
+                        {{ category.name }} {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No Categories
+                {% endif %}
+            </td>
+            <td>{{ book.quantity }}</td>
+            <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editBookModal{{ book.id }}">Update</button></td>
+            <td><a href="#" class="btn btn-danger">Delete</a></td>
+        </tr>
+
+        <!-- Edit Book Modal -->
+        <div class="modal" id="editBookModal{{ book.id }}" aria-hidden="true">
+            <!-- Modal content here -->
+        </div>
+
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
