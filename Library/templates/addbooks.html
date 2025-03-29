@@ -43,11 +43,12 @@
 
             <div class="mb-3">
                 <label for="category" class="form-label">Category :</label>
-                <select name="category" id="category" class="form-select">
+                <select name="category" id="category" class="form-select" aria-hidden="false" >
                     <option selected disabled>Select The Category</option>
                     {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.name }}</option>
-                    {% endfor %}
+                    
+                        {% endfor %}
                 </select>
             </div>
 

@@ -246,3 +246,40 @@ def  viewBooks(request):
     categories = Category.objects.all()
     return render(request, 'view_books.html', {'books': books, 'categories': categories})
 
+def updateBook(request,id):
+    if request.method == 'POST':
+        book_name = request.POST.get('title')
+        author = request.POST.get('author')
+        isbn = request.POST.get('isbn')
+        publications = request.POST.get('publisher')
+        quantity = request.POST.get('quantity')
+        if book_name == '' or author == '' or isbn == '' or publications == '' or quantity == '':
+            messages.error(request, 'All fields are required')
+            return redirect('view_books')
+
+        if Book.objects.filter(isbn=isbn).exclude(id=id).exists():
+            messages.error(request, 'Book ID already exists')
+            return redirect('view_books')
+
+        if Book.objects.filter(id=id).exists():
+            bookInfo = Book.objects.get(id=id)
+            bookInfo.title = book_name
+            bookInfo.author = author
+            bookInfo.isbn = isbn
+            bookInfo.publisher = publications
+            bookInfo.quantity = quantity
+            bookInfo.save()
+            messages.success(request, 'Book Updated Successfully')
+            return redirect('view_books')
+        else:
+            messages.error(request, 'Book not found')
+            return redirect('view_books')
+
+def deleteBook(request, id):
+    try:
+        book = Book.objects.get(id=id)
+        book.delete()
+        messages.success(request, 'Book Deleted Successfully')
+    except:
+        messages.error(request, 'Error in deleting book')
+    return redirect('view_books')
