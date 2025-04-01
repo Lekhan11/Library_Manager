@@ -34,22 +34,6 @@ class Book(models.Model):
     isbn = models.CharField(max_length=20, blank=True, null=True)
     def __str__(self):
         return self.title
-class Reservation(models.Model):
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Approved', 'Approved'),
-        ('Cancelled', 'Cancelled'),
-    ]
-
-    user = models.ForeignKey(Students, on_delete=models.CASCADE) 
-    book = models.ForeignKey('Book', on_delete=models.CASCADE)
-    reservation_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    expiry_date = models.DateField()
-
-
-    def __str__(self):
-        return f"{self.book.title} reserved by {self.user.username}"
 class IssuedBooks(models.Model):
     user = models.ForeignKey(Students, on_delete=models.CASCADE)
     book = models.ForeignKey('Book', on_delete=models.CASCADE)
@@ -57,3 +41,10 @@ class IssuedBooks(models.Model):
     due_date = models.DateField()
     def __str__(self):
         return f"{self.book.title} issued to {self.user.username}"
+class ReturnedBooks(models.Model):
+    user = models.ForeignKey(Students, on_delete=models.CASCADE)
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    return_date = models.DateField()
+    condition = models.CharField(max_length=10, default="Good")
+    def __str__(self):
+        return f"{self.book.title} returned by {self.user.username}"

@@ -199,23 +199,87 @@ def updateUser(request,role,id):
 # View to handle book return
 def returnBook(request):
     if request.method == "POST":
-        # Retrieve form data
-        student_id = request.POST.get('studentId')
-        book_id = request.POST.get('bookId')
+        # Retrieve form dat
+        user_id = request.POST.get('user_id')
+        book_id = request.POST.get('book_id')
         return_date = request.POST.get('returnDate')
-        book_condition = request.POST.get('bookCondition')
-
-        # You can now process the return (e.g., update the database, check conditions, etc.)
-        # For example, check if the book exists in the library system
-        # and update the database to mark it as returned.
-
-        # Assume the return is successful (you should add your actual logic)
-        messages.success(request, "The book has been successfully returned!")
+        book_condition = request.POST.get('condition')
+        if not Book.objects.filter(isbn=book_id).exists():
+            messages.error(request, 'Book not found')
+            return redirect('return_book')
+        if Students.objects.filter(roll_no=user_id).exists():
+            user = Students.objects.get(roll_no=user_id)
+        elif Teacher.objects.filter(teacher_id=user_id).exists():
+            user = Teacher.objects.get(teacher_id=user_id)
+        else:
+            messages.error(request, 'User not found')
+            return redirect('return_book')
+        if user_id == '' or book_id == '' or return_date == '' or book_condition == '':
+            messages.error(request, 'All fields are required')
+            return redirect('return_book')
+        else:
+            issued_book = IssuedBooks.objects.filter(user=user.id, book=Book.objects.get(isbn=book_id)).first()
+            if not issued_book:
+                messages.error(request, 'Book not issued to this user')
+                return redirect('return_book')
+            returnBook = ReturnedBooks(user=user, book=Book.objects.get(isbn=book_id), return_date=return_date ,condition=book_condition)
+            returnBook.save()
+            if user.books_pending <= 0:
+                messages.error(request, 'No books to return')
+                return redirect('return_book')
+            user.books_pending = user.books_pending - 1
+            user.books_returned = user.books_returned + 1
+            user.save()
+            book = Book.objects.get(isbn=book_id)
+            book.quantity = book.quantity + 1
+            book.save()
+            messages.success(request, "The book has been successfully returned!")
+            return redirect('return_book')
 
         # Redirect to the same page with a success message
         return render(request, 'returnBook.html')
     else:
         return render(request, 'returnBook.html')
 
+def  viewBooks(request):
+    books = Book.objects.all()
+    categories = Category.objects.all()
+    return render(request, 'view_books.html', {'books': books, 'categories': categories})
 
+def updateBook(request,id):
+    if request.method == 'POST':
+        book_name = request.POST.get('title')
+        author = request.POST.get('author')
+        isbn = request.POST.get('isbn')
+        publications = request.POST.get('publisher')
+        quantity = request.POST.get('quantity')
+        if book_name == '' or author == '' or isbn == '' or publications == '' or quantity == '':
+            messages.error(request, 'All fields are required')
+            return redirect('view_books')
 
+        if Book.objects.filter(isbn=isbn).exclude(id=id).exists():
+            messages.error(request, 'Book ID already exists')
+            return redirect('view_books')
+
+        if Book.objects.filter(id=id).exists():
+            bookInfo = Book.objects.get(id=id)
+            bookInfo.title = book_name
+            bookInfo.author = author
+            bookInfo.isbn = isbn
+            bookInfo.publisher = publications
+            bookInfo.quantity = quantity
+            bookInfo.save()
+            messages.success(request, 'Book Updated Successfully')
+            return redirect('view_books')
+        else:
+            messages.error(request, 'Book not found')
+            return redirect('view_books')
+
+def deleteBook(request, id):
+    try:
+        book = Book.objects.get(id=id)
+        book.delete()
+        messages.success(request, 'Book Deleted Successfully')
+    except:
+        messages.error(request, 'Error in deleting book')
+    return redirect('view_books')
