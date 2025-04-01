@@ -1,12 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
-    {% include 'base.html' %}
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %}Home Page{% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="text-center">
+    <h2>Book Details</h2>
+  </div>
+  <div class="row">
+    <div class="col">
+        <div class="card">
+          <div class="card-header bg-dark">
+            <h6 class="text-black text-center text-white">Books Available</h3>
+          </div>
+          <div class="card-body bg-primary">
+            <h1 class="text-center">{{total_books}}</h1>
+          </div>
+        </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-header bg-dark">
+          <h6 class="text-black text-center text-white">Books Issued</h3>
+        </div>
+        <div class="card-body bg-primary">
+          <h1 class="text-center">{{total_issued_books}}</h1>
+        </div>
+      </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-header bg-dark">
+        <h6 class="text-black text-center text-white">Books Returned</h3>
+      </div>
+      <div class="card-body bg-primary">
+        <h1 class="text-center">{{total_returned_books}}</h1>
+      </div>
+    </div>
+</div>
+<hr class="my-4 border border-2 border-dark">
+  </div>
+</div>
     
-</body>
-</html>
+{% endblock %}

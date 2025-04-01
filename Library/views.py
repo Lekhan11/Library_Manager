@@ -22,7 +22,15 @@ def LoginPage(request):
 
 @login_required(login_url='login')
 def HomePage(request):
-    return render(request, 'home.html')
+    books = Book.objects.all()
+    issued_books = IssuedBooks.objects.all()
+    returned_books = ReturnedBooks.objects.all()
+    total_books = books.count()
+    total_issued_books = issued_books.count()
+    total_returned_books = returned_books.count()
+    context ={'total_books': total_books, 'total_issued_books': total_issued_books, 'total_returned_books': total_returned_books}
+    print(total_books, total_issued_books, total_returned_books)
+    return render(request, 'home.html',context)
 
 @login_required(login_url='login')
 def IssueBooks(request):
@@ -73,7 +81,7 @@ def addBook(request):
         quantity=request.POST.get('quantity')
         new_category=request.POST.get('new_category')
         category = request.POST.get('category')
-        print(new_category)
+        print(category)
         if new_category:
             if Category.objects.filter(name=new_category).exists():
                 messages. error(request, 'Category already exists')
@@ -87,22 +95,27 @@ def addBook(request):
             if Book.objects.filter(isbn=isbn).exists():
                 messages. error(request, 'Book ID already exists')
                 return redirect('add_book')
-            try:
-                bookInfo = Book.objects.create(
+        try:
+            category_obj = Category.objects.get(id=category)
+        except Category.DoesNotExist:
+            messages.error(request, 'Invalid category selected')
+            return redirect('add_book')
+        try:
+            bookInfo = Book.objects.create(
                 title=book_name,
                 author=author,
                 isbn=isbn,
                 publisher=publications,
                 quantity=quantity
-            )
-           
-                bookInfo.categories.set(category)
-                messages.success(request, 'Book Added Successfully')
-                return redirect('add_book')
-            except Exception as e:
-                print(e)
-                messages.error(request, 'Error in adding book')
-                return redirect('add_book')
+        )
+        
+            bookInfo.categories.add(category_obj)
+            messages.success(request, 'Book Added Successfully')
+            return redirect('add_book')
+        except Exception as e:
+            print(e)
+            messages.error(request, 'Error in adding book')
+            return redirect('add_book')
         else:
             messages. error(request, 'All fields are required')
             return redirect('add_book')

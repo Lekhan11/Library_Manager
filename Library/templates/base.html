@@ -13,7 +13,7 @@
 
     <!-- Fixed Top Navbar -->
     <nav class="navbar navbar-dark bg-dark fixed-top">
-        <a href="{% url 'home' %}" class="navbar-brand ps-3">Library Management</a>
+        <a href="{% url 'home' %}" class="navbar-brand ps-3">Library Management <i class="bi bi-book ps-2"></i></a>
         <a class="text-white nav-link ms-auto" href="{% url 'logout' %}">Logout</a>
     </nav>
 
@@ -54,7 +54,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-grow-1 p-4" style="margin-left: 250px;">
+        <div class="flex-grow-1 p-4 container-fluid" style="margin-left: 250px;">
             {% block content %}{% endblock %}
         </div>
     </div>
