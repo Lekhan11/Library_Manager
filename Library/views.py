@@ -23,13 +23,12 @@ def LoginPage(request):
 @login_required(login_url='login')
 def HomePage(request):
     books = Book.objects.all()
-    issued_books = IssuedBooks.objects.all()
-    returned_books = ReturnedBooks.objects.all()
     total_books = books.count()
-    total_issued_books = issued_books.count()
-    total_returned_books = returned_books.count()
-    context ={'total_books': total_books, 'total_issued_books': total_issued_books, 'total_returned_books': total_returned_books}
-    print(total_books, total_issued_books, total_returned_books)
+    students = Students.objects.all()
+    total_students = students.count()
+    teachers = Teacher.objects.all()
+    total_teachers = teachers.count()
+    context = {'total_books':total_books, 'total_students':total_students, 'total_teachers':total_teachers} 
     return render(request, 'home.html',context)
 
 @login_required(login_url='login')

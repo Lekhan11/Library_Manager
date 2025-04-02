@@ -4,15 +4,15 @@
 
 <div class="container">
   <div class="text-center">
-    <h2>Book Details</h2>
+    <h2>Library Stats</h2>
   </div>
   <div class="row">
     <div class="col">
         <div class="card">
           <div class="card-header bg-dark">
-            <h6 class="text-black text-center text-white">Books Available</h3>
+            <h6 class="text-black text-center text-white">Books Available <i class="bi bi-book"></i></h3>
           </div>
-          <div class="card-body bg-primary">
+          <div class="card-body bg-warning">
             <h1 class="text-center">{{total_books}}</h1>
           </div>
         </div>
@@ -20,20 +20,20 @@
     <div class="col">
       <div class="card">
         <div class="card-header bg-dark">
-          <h6 class="text-black text-center text-white">Books Issued</h3>
+          <h6 class="text-black text-center text-white">Total Students <i class="bi bi-people-fill"></i></h3>
         </div>
         <div class="card-body bg-primary">
-          <h1 class="text-center">{{total_issued_books}}</h1>
+          <h1 class="text-center">{{total_students}}</h1>
         </div>
       </div>
   </div>
   <div class="col">
     <div class="card">
       <div class="card-header bg-dark">
-        <h6 class="text-black text-center text-white">Books Returned</h3>
+        <h6 class="text-black text-center text-white">Total Teachers <i class="bi bi-person-circle"></i></h3>
       </div>
-      <div class="card-body bg-primary">
-        <h1 class="text-center">{{total_returned_books}}</h1>
+      <div class="card-body bg-danger">
+        <h1 class="text-center">{{total_teachers }}</h1>
       </div>
     </div>
 </div>
