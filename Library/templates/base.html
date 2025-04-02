@@ -23,7 +23,7 @@
         <div class="bg-dark text-white p-3" style="width: 250px; height: 100vh; position: fixed;">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    <a class="nav-link" href="{% url 'home' %}">Home <i class="bi bi-house"></i></a>
                 </li>
 
                 <!-- Manage Users Dropdown -->
@@ -32,8 +32,8 @@
                         Manage Users
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="{% url 'add_users' %}">Add Users</a></li>
-                        <li><a class="dropdown-item" href="{% url 'view_users' %}">View Users</a></li>
+                        <li><a class="dropdown-item" href="{% url 'add_users' %}">Add Users <i class="bi bi-person-add"></i></a></li>
+                        <li><a class="dropdown-item" href="{% url 'view_users' %}">View Users <i class="bi bi-eye"></i></a></li>
                     </ul>
                 </li>
 
@@ -43,13 +43,13 @@
                         Manage Books
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <li><a class="dropdown-item" href="{% url 'add_book' %}">Add Books</a></li>
-                        <li><a class="dropdown-item" href="{% url 'issue_books' %}">Issue Books</a></li>
-                        <li><a class="dropdown-item" href="{% url 'return_book' %}">Return Books</a></li>
+                        <li><a class="dropdown-item" href="{% url 'add_book' %}">Add Books <i class="bi bi-plus-circle"></i></a></li>
+                        <li><a class="dropdown-item" href="{% url 'issue_books' %}">Issue Books <i class="bi bi-arrow-bar-right"></i></a></li>
+                        <li><a class="dropdown-item" href="{% url 'return_book' %}">Return Books <i class="bi bi-arrow-bar-left"></i></a></li>
                     </ul>
                 </li>
                 
-                <li><a class="nav-link" href="{% url 'view_books' %}">View Books</a></li>
+                <li><a class="nav-link" href="{% url 'view_books' %}">View Books <i class="bi bi-eye"></i></a></li>
             </ul>
         </div>
 

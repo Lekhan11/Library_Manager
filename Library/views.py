@@ -3,6 +3,7 @@ from .models import *
 from django.contrib.auth import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from random import sample
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -23,12 +24,16 @@ def LoginPage(request):
 @login_required(login_url='login')
 def HomePage(request):
     books = Book.objects.all()
+    
+    book_ids = list(Book.objects.values_list('id', flat=True))  # Get all book IDs
+    selected_ids = sample(book_ids, min(len(book_ids), 6))  # Pick 5 random IDs
+    books = Book.objects.filter(id__in=selected_ids)  # Fetch those books
     total_books = books.count()
     students = Students.objects.all()
     total_students = students.count()
     teachers = Teacher.objects.all()
     total_teachers = teachers.count()
-    context = {'total_books':total_books, 'total_students':total_students, 'total_teachers':total_teachers} 
+    context = {'total_books':total_books, 'total_students':total_students, 'total_teachers':total_teachers,'books':books} 
     return render(request, 'home.html',context)
 
 @login_required(login_url='login')
@@ -68,6 +73,7 @@ def IssueBooks(request):
             messages.error(request, 'Error in issuing book')
     return render(request, 'issue_books.html')
     
+@login_required(login_url='login')
 def addBook(request):
     context = {
         'categories': Category.objects.all()
@@ -120,6 +126,7 @@ def addBook(request):
             return redirect('add_book')
     return render(request, 'addbooks.html',context)
 
+@login_required(login_url='login')
 def addusers(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -151,15 +158,19 @@ def addusers(request):
     
     return render(request, 'addusers.html')
 
+
+@login_required(login_url='login')
 def Logout(request):
     logout(request)
     return redirect('login')
 
+@login_required(login_url='login')
 def viewUsers(request):
     students = Students.objects.all()
     teachers = Teacher.objects.all()
     return render(request, 'viewusers.html', {'students': students, 'teachers': teachers})
 
+@login_required(login_url='login')
 def deleteUser(request, role,id):
     try:
         if role == 'teacher':
@@ -172,6 +183,7 @@ def deleteUser(request, role,id):
         messages.error(request, 'Error in deleting user')
     return redirect('view_users')
 
+@login_required(login_url='login')
 def updateUser(request,role,id):
     if role == 'teacher':
         user = Teacher.objects.get(id=id)
@@ -209,6 +221,7 @@ def updateUser(request,role,id):
     return redirect('view_users')
 
 # View to handle book return
+@login_required(login_url='login')
 def returnBook(request):
     if request.method == "POST":
         # Retrieve form dat
@@ -253,11 +266,13 @@ def returnBook(request):
     else:
         return render(request, 'returnBook.html')
 
+@login_required(login_url='login')
 def  viewBooks(request):
     books = Book.objects.all()
     categories = Category.objects.all()
     return render(request, 'view_books.html', {'books': books, 'categories': categories})
 
+@login_required(login_url='login')
 def updateBook(request,id):
     if request.method == 'POST':
         book_name = request.POST.get('title')
@@ -287,6 +302,7 @@ def updateBook(request,id):
             messages.error(request, 'Book not found')
             return redirect('view_books')
 
+@login_required(login_url='login')
 def deleteBook(request, id):
     try:
         book = Book.objects.get(id=id)

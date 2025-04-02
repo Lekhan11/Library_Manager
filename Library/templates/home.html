@@ -40,5 +40,21 @@
 <hr class="my-4 border border-2 border-dark">
   </div>
 </div>
-    
+<div class="row">
+  {%for book in books%}
+  <div class="col-4">
+    <div class="card mb-4">
+      <div class="card-header text-center">
+        <h5>{{book.title}}</h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Author:</strong> {{book.author}}</p>
+        <p><strong>ISBN:</strong> {{book.isbn}}</p>
+        <p><strong>Publisher:</strong> {{book.publisher}}</p>
+        <p><strong>Available quantity:</strong> {{book.quantity}}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 {% endblock %}
