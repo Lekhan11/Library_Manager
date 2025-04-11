@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from random import sample
 from django.core.paginator import Paginator
+import csv
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -222,11 +223,15 @@ def updateUser(request,role,id):
             if name == '' or teacher_id == '' or department == '':
                 messages.error(request, 'All fields are required')
                 return redirect('view_users')
-            user.name = name
-            user.teacher_id = teacher_id
-            user.department = department
-            user.save()
-            messages.success(request, 'User Updated Successfully')
+            elif Teacher.objects.filter(teacher_id=teacher_id).exists():
+                messages.error(request, 'User already exists')
+                return redirect('view_users')
+            else:
+                user.name = name
+                user.teacher_id = teacher_id
+                user.department = department
+                user.save()
+                messages.success(request, 'User Updated Successfully')
         return redirect('view_users')
     else:
         user = Students.objects.get(id=id)
@@ -376,4 +381,34 @@ def searchBook(request):
     return redirect('view_books')
 
 def bulkAdd(request):
-    return render(request, 'bulkadd.html')
+    if request.method == "POST":
+        role = request.POST.get("role")
+        csv_file = request.FILES.get("csv_file")
+
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, "Please upload a valid CSV file.")
+            return redirect('bulk_upload')
+
+        reader = csv.reader(csv_file.read().decode('utf-8').splitlines())
+
+        next(reader)  # Skip header
+
+        for row in reader:
+            if role == 'student':
+                Students.objects.create(
+                    roll_no=row[0],
+                    name=row[1],
+                    class_id=row[2],
+                    section=row[3]
+                )
+            elif role == 'teacher':
+                Teacher.objects.create(
+                    teacher_id=row[0],
+                    name=row[1],
+                    department=row[2]
+                )
+        
+        messages.success(request, f"{role.capitalize()}s added successfully.")
+        return redirect('bulk_add')
+
+    return render(request, 'bulkAdd.html')
