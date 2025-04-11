@@ -4,6 +4,7 @@ from django.contrib.auth import *
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from random import sample
+from django.core.paginator import Paginator
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -11,7 +12,7 @@ def LoginPage(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user == None:
-            messages.error(request, 'Invalid Username or Password')
+            messages.error(request, 'Invalid Username or password')
             return redirect('login')
         elif user:
             login(request, user)
@@ -59,6 +60,9 @@ def IssueBooks(request):
             book = Book.objects.get(isbn=book_id)
         else:
             messages.error(request, 'Book not found')
+            return redirect('issue_books')
+        if IssuedBooks.objects.filter(user=user, book=book).exists():
+            messages.error(request, 'Book already issued to this user')
             return redirect('issue_books')
         try:
             issued_book = IssuedBooks(user=user, book=book, issue_date=issue_date, due_date=due_date)
@@ -166,9 +170,33 @@ def Logout(request):
 
 @login_required(login_url='login')
 def viewUsers(request):
-    students = Students.objects.all()
-    teachers = Teacher.objects.all()
-    return render(request, 'viewusers.html', {'students': students, 'teachers': teachers})
+    students_list = Students.objects.all()
+    teachers_list = Teacher.objects.all()
+    books_issued = IssuedBooks.objects.all()
+    books_returned = ReturnedBooks.objects.all()
+    student_paginator = Paginator(students_list, 2)  # 5 per page
+    teacher_paginator = Paginator(teachers_list, 2)
+
+    for student in students_list:
+        student_issued_books = IssuedBooks.objects.filter(user=student)
+        student_returned_books = ReturnedBooks.objects.filter(user=student)
+        returned_book_ids = [r.book.id for r in student_returned_books]
+        pending_books = [b for b in student_issued_books if b.book.id not in returned_book_ids]
+        student.pending_books = pending_books
+           
+    student_page_number = request.GET.get('student_page')
+    teacher_page_number = request.GET.get('teacher_page')
+
+    students = student_paginator.get_page(student_page_number)
+    teachers = teacher_paginator.get_page(teacher_page_number)
+
+    context = {
+        'students': students,
+        'teachers': teachers,
+        
+        
+    }
+    return render(request, 'viewusers.html', context)
 
 @login_required(login_url='login')
 def deleteUser(request, role,id):
@@ -247,19 +275,21 @@ def returnBook(request):
             if not issued_book:
                 messages.error(request, 'Book not issued to this user')
                 return redirect('return_book')
-            returnBook = ReturnedBooks(user=user, book=Book.objects.get(isbn=book_id), return_date=return_date ,condition=book_condition)
-            returnBook.save()
-            if user.books_pending <= 0:
+            elif user.books_pending <= 0:
                 messages.error(request, 'No books to return')
                 return redirect('return_book')
-            user.books_pending = user.books_pending - 1
-            user.books_returned = user.books_returned + 1
-            user.save()
-            book = Book.objects.get(isbn=book_id)
-            book.quantity = book.quantity + 1
-            book.save()
-            messages.success(request, "The book has been successfully returned!")
-            return redirect('return_book')
+            else:
+                returnBook = ReturnedBooks(user=user, book=Book.objects.get(isbn=book_id), return_date=return_date ,condition=book_condition)
+                returnBook.save()
+                issued_book.delete()
+                user.books_pending = user.books_pending - 1
+                user.books_returned = user.books_returned + 1
+                user.save()
+                book = Book.objects.get(isbn=book_id)
+                book.quantity = book.quantity + 1
+                book.save()
+                messages.success(request, "The book has been successfully returned!")
+                return redirect('return_book')
 
         # Redirect to the same page with a success message
         return render(request, 'returnBook.html')
@@ -303,6 +333,7 @@ def updateBook(request,id):
             return redirect('view_books')
 
 @login_required(login_url='login')
+
 def deleteBook(request, id):
     try:
         book = Book.objects.get(id=id)
@@ -311,3 +342,38 @@ def deleteBook(request, id):
     except:
         messages.error(request, 'Error in deleting book')
     return redirect('view_books')
+
+@login_required(login_url='login')
+def searchUser(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('userID')
+        
+        if Students.objects.filter(roll_no=user_id).exists():
+            user = Students.objects.get(roll_no=user_id)
+            student_issued_books = IssuedBooks.objects.filter(user=user)
+            student_returned_books = ReturnedBooks.objects.filter(user=user)
+            returned_book_ids = [r.book.id for r in student_returned_books]
+            pending_books = [b for b in student_issued_books if b.book.id not in returned_book_ids]
+            user.pending_books = pending_books
+            return render(request, 'viewusers.html', {'searched_student': user})
+        elif Teacher.objects.filter(teacher_id=user_id).exists():
+            user = Teacher.objects.get(teacher_id=user_id)
+            return render(request, 'viewusers.html', {'searched_teacher': user})
+        else:
+            messages.error(request, 'User not found')
+            return redirect('view_users')
+    return redirect('view_users')
+
+def searchBook(request):
+    if request.method == 'POST':
+        book_id = request.POST.get('bookID')
+        if Book.objects.filter(isbn=book_id).exists():
+            book = Book.objects.get(isbn=book_id)
+            return render(request, 'view_books.html', {'searched_book': book})
+        else:
+            messages.error(request, 'Book not found')
+            return redirect('view_books')
+    return redirect('view_books')
+
+def bulkAdd(request):
+    return render(request, 'bulkadd.html')

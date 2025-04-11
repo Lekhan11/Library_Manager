@@ -13,6 +13,14 @@
             </div>
         {% endif %}
 
+        <form action="{% url 'search_book'%}" method="post">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="bookID" placeholder="Enter the ISBN Code...." required>
+                <button type="submit" class="btn btn-primary">Search <i class="bi bi-search"></i></button>
+            </div>
+        </form>
+
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -27,6 +35,70 @@
         </tr>
     </thead>
     <tbody>
+        {%if searched_book%}
+        <tr>
+            <td>{{ searched_book.isbn }}</td>
+            <td>{{ searched_book.title }}</td>
+            <td>{{ searched_book.author }}</td>
+            <td>{{ searched_book.publisher }}</td>
+            <td>
+                {% if searched_book.categories %}
+                    {% for category in searched_book.categories.all %}
+                        {{ category.name }} {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No Categories
+                {% endif %}
+            </td>
+            <td>{{ searched_book.quantity }}</td>
+            <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editBookModal{{ searched_book.id }}">Update</button></td>
+            <td><a href="{%url 'delete_book' searched_book.id%}" class="btn btn-danger">Delete</a></td>
+        </tr>
+        <div class="modal" id="editBookModal{{ searched_book.id }}" aria-hidden="true">
+            <!-- Modal content here -->
+            <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title">Edit Book</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'update_book' searched_book.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="editTitle" class="col-form-label">Title:</label>
+                                    <input type="text" class="form-control" id="editTitle" name="title" value="{{ searched_book.title }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editAuthor" class="col-form-label">Author:</label>
+                                    <input type="text" class="form-control" id="editAuthor" name="author" value="{{ searched_book.author }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPublisher" class="col-form-label">Publisher:</label>
+                                    <input type="text" class="form-control" id="editPublisher" name="publisher" value="{{ searched_book.publisher }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editISBN" class="col-form-label">ISBN:</label>
+                                    <input type="text" class="form-control" id="editISBN" name="isbn" value="{{searched_book.isbn}}" >
+                                    <div class="modal-footer">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="editQuantity" class="col-form-label">Quantity:</label>
+                                    <input type="text" class="form-control" id="editQuantity" name="quantity" value="{{ searched_book.quantity }}">
+                                </div>
+
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button class="btn btn-primary" type="submit">Confirm</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>             
+            </div>
+        </div>
+
+
+        {% elif books%}
         {% for book in books %}
         <tr>
             <td>{{ book.isbn }}</td>
@@ -92,6 +164,11 @@
         </div>
 
         {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="8" class="text-center">No books found.</td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 </div>

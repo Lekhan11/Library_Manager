@@ -10,7 +10,7 @@ class Students(models.Model):
     books_returned = models.IntegerField(default=0)
     books_pending = models.IntegerField(default=0)
     def __str__(self):
-        return self.name
+        return self.roll_no
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
     teacher_id = models.CharField(max_length=10)

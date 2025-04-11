@@ -23,33 +23,35 @@
         <div class="bg-dark text-white p-3" style="width: 250px; height: 100vh; position: fixed;">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">Home <i class="bi bi-house"></i></a>
+                    <a class="nav-link" href="{% url 'home' %}">Home <i class="bi bi-house-fill"></i></a>
                 </li>
 
                 <!-- Manage Users Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Manage Users
+                        Manage Users <i class="bi bi-gear-fill"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="{% url 'add_users' %}">Add Users <i class="bi bi-person-add"></i></a></li>
-                        <li><a class="dropdown-item" href="{% url 'view_users' %}">View Users <i class="bi bi-eye"></i></a></li>
+                        <li><a class="dropdown-item" href="{% url 'add_users' %}">Add Users <i class="bi bi-person-fill-add"></i></a></li>
+                        <li><a class="dropdown-item" href="{% url 'view_users' %}">View Users <i class="bi bi-eye-fill"></i></a></li>
                     </ul>
                 </li>
 
                 <!-- Manage Books Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Manage Books
+                        Manage Books <i class="bi bi-gear-fill"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <li><a class="dropdown-item" href="{% url 'add_book' %}">Add Books <i class="bi bi-plus-circle"></i></a></li>
+                        <li><a class="dropdown-item" href="{% url 'add_book' %}">Add Books <i class="bi bi-plus-circle-fill"></i></a></li>
                         <li><a class="dropdown-item" href="{% url 'issue_books' %}">Issue Books <i class="bi bi-arrow-bar-right"></i></a></li>
                         <li><a class="dropdown-item" href="{% url 'return_book' %}">Return Books <i class="bi bi-arrow-bar-left"></i></a></li>
                     </ul>
                 </li>
                 
-                <li><a class="nav-link" href="{% url 'view_books' %}">View Books <i class="bi bi-eye"></i></a></li>
+                <li><a class="nav-link" href="{% url 'view_books' %}">View Books <i class="bi bi-eye-fill"></i></a></li>
+                <li><a class="nav-link" href="{% url 'bulk_add' %}">Bulk Add <i class="bi bi-opencollective"></i></a></li>
+            
             </ul>
         </div>
 
