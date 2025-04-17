@@ -16,7 +16,7 @@
         <form action="{% url 'search_book'%}" method="post">
             {% csrf_token %}
             <div class="input-group mb-3">
-                <input type="text" class="form-control" name="bookID" placeholder="Enter the ISBN Code...." required>
+                <input type="text" class="form-control" name="bookID" placeholder="Enter the ISBN Code or Title  or Author Name...." required>
                 <button type="submit" class="btn btn-primary">Search <i class="bi bi-search"></i></button>
             </div>
         </form>

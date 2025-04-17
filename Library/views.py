@@ -1,3 +1,4 @@
+from turtle import title
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth import *
@@ -244,13 +245,17 @@ def updateUser(request,role,id):
             if name == '' or class_id == '' or roll_no == '' or section == '':
                 messages.error(request, 'All fields are required')
                 return redirect('view_users')
-            user.name = name
-            user.class_id = class_id
-            user.roll_no = roll_no
-            user.section = section
-            user.save()
-            messages.success(request, 'User Updated Successfully')
-        return redirect('view_users')
+            elif Students.objects.filter(roll_no=roll_no).exists():
+                messages.error(request, 'User already exists')
+                return redirect('view_users')
+            else:
+                user.name = name
+                user.class_id = class_id
+                user.roll_no = roll_no
+                user.section = section
+                user.save()
+                messages.success(request, 'User Updated Successfully')
+            return redirect('view_users')
     return redirect('view_users')
 
 # View to handle book return
@@ -338,7 +343,6 @@ def updateBook(request,id):
             return redirect('view_books')
 
 @login_required(login_url='login')
-
 def deleteBook(request, id):
     try:
         book = Book.objects.get(id=id)
@@ -374,10 +378,14 @@ def searchBook(request):
         book_id = request.POST.get('bookID')
         if Book.objects.filter(isbn=book_id).exists():
             book = Book.objects.get(isbn=book_id)
-            return render(request, 'view_books.html', {'searched_book': book})
+        elif Book.objects.filter(title=book_id).exists():
+            book = Book.objects.get(title=book_id)
+        elif Book.objects.filter(author=book_id).exists():
+            book = Book.objects.get(author=book_id)
         else:
             messages.error(request, 'Book not found')
             return redirect('view_books')
+        return render(request, 'view_books.html', {'searched_book': book})
     return redirect('view_books')
 
 def bulkAdd(request):
