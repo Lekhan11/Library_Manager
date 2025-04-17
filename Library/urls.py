@@ -19,4 +19,5 @@ path('view_books/delete/<int:id>/', deleteBook, name='delete_book'),
 path('view_books/update/<int:id>/', updateBook, name='update_book'),
 path('view_books/search', searchBook, name='search_book'),
 path('bulkadd',bulkAdd, name='bulk_add'),
+path('bulkaddbooks',bulkAddBooks, name='bulkadd_books'),
 ]

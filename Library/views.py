@@ -412,3 +412,38 @@ def bulkAdd(request):
         return redirect('bulk_add')
 
     return render(request, 'bulkAdd.html')
+
+def bulkAddBooks(request):
+    if request.method == 'POST':
+        csv_file = request.FILES.get('csv_file')
+
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, 'Please upload a valid CSV file.')
+            return redirect('bulkadd_books')
+
+        try:
+            decoded_file = csv_file.read().decode('utf-8')
+            io_string = io.StringIO(decoded_file)
+            reader = csv.reader(io_string)
+            header = next(reader)  # skip header row
+
+            books_to_create = []
+            for row in reader:
+                if len(row) < 4:
+                    continue
+                title, author, isbn, published_date = row[:4]
+                books_to_create.append(Book(
+                    title=title.strip(),
+                    author=author.strip(),
+                    isbn=isbn.strip(),
+                    published_date=published_date.strip()
+                ))
+
+            Book.objects.bulk_create(books_to_create)
+            messages.success(request, f"Successfully added {len(books_to_create)} books.")
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+
+        return redirect('bulkadd_books')
+
+    return render(request, 'bulkadd_books.html')
