@@ -50,8 +50,16 @@
                 </li>
                 
                 <li><a class="nav-link" href="{% url 'view_books' %}">View Books <i class="bi bi-eye-fill"></i></a></li>
-                <li><a class="nav-link" href="{% url 'bulk_add' %}">Bulk Add <i class="bi bi-opencollective"></i></a></li>
-            
+                <!-- Manage Bulk Add -->
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Bulk Add <i class="bi bi-opencollective "></i>
+                    </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                    <li><a class="dropdown-item" href="{% url 'bulk_add' %}">Bulk Add Users <i class="bi bi-person-fill-add"></i></a></li>
+                    <li><a class="dropdown-item" href="{% url 'bulkadd_books' %}">Bulk Add Books <i class="bi bi-plus-circle-fill"></i></a></li>
+                </ul>
+                 </li>
             </ul>
         </div>
 
