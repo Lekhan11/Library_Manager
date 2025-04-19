@@ -50,6 +50,7 @@
                         <th>Books Issued</th>
                         <th>Books Pending</th>
                         <th>Books Returned</th>
+                        <th>Fine</th>
                         <th>Update</th>
                         <th>Delete</th>
                     </tr>
@@ -64,6 +65,7 @@
                         <td>{{ searched_student.books_issued }} </td>
                         <td>{{ searched_student.books_pending }} <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{searched_student.roll_no}}"><i class="bi bi-eye"></i></button></td>
                         <td>{{ searched_student.books_returned }}</td>
+                        <td>{{searched_student.fine}}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ searched_student.id }}">Update</button></td>
                         <td><a href="{% url 'delete_user' 'student' searched_student.id %}" class="btn btn-danger">Delete</a></td>
                     </tr>
@@ -124,6 +126,7 @@
                         <td>{{ user.books_issued }}</td>
                         <td>{{ user.books_pending }}  <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{user.roll_no}}"><i class="bi bi-eye"></i></button></td>
                         <td>{{ user.books_returned }}</td>
+                        <td>{{user.fine}}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ user.id }}">Update</button></td>
                         <td><a href="{% url 'delete_user' 'student' user.id %}" class="btn btn-danger">Delete</a></td>
                     </tr>
@@ -208,6 +211,7 @@
                         <th>Staff ID</th>
                         <th>Name</th>
                         <th>Department</th>
+                        <th>Fine</th>
                         <th>Update</th>
                         <th>Delete</th>
                     </tr>
@@ -218,6 +222,7 @@
                         <td>{{ searched_teacher.teacher_id }}</td>
                         <td>{{ searched_teacher.name }}</td>
                         <td>{{ searched_teacher.department }}</td>
+                        <td>{{ searched_teacher.fine }}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ searched_teacher.id }}">Update</button></td>
                         <td><a href="{% url 'delete_user' 'teacher' searched_teacher.id %}" class="btn btn-danger">Delete</a></td>
                     </tr>
@@ -250,6 +255,7 @@
                         <td>{{ user.teacher_id }}</td>
                         <td>{{ user.name }}</td>
                         <td>{{ user.department }}</td>
+                        <td>{{user.fine}}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ user.id }}">Update</button></td>
                         <td><a href="{% url 'delete_user' 'teacher' user.id %}" class="btn btn-danger">Delete</a></td>
                     </tr>

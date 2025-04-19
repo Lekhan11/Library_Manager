@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Add Users{% endblock %}
+{% block content %}
+
+<div class="col">
+  <form action="" method="post">
+    {% csrf_token %}
+        {% if messages %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          {% for message in messages %}
+          <p>{{ message }}</p>
+          {% endfor %}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+    <div class="card mb-3 border-primary">
+      <div class="card-header border-primary">
+        <h5 class="text-center">Return Date Settings</h5>
+      </div>
+      <div class="card-body">
+        <label class="form-label">For students</label>
+        <div class="input-group">
+          <input type="number" name="maxDueStud" class="form-control" required value="{{ settings.maxDueStud }}">
+          <span class="input-group-text">Days</span>
+        </div>
+
+        <label class="form-label">For teachers</label>
+        <div class="input-group">
+          <input type="number" name="maxDueTeach" class="form-control" required value="{{ settings.maxDueTeach }}">
+          <span class="input-group-text">Days</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3 border-primary">
+      <div class="card-header border-primary">
+        <h5 class="text-center">Fine Amount Settings</h5>
+      </div>
+      <div class="card-body">
+        <label class="form-label">For students</label>
+        <div class="input-group">
+          <input type="number" name="fineStud" class="form-control" required value="{{ settings.fineStud }}">
+          <span class="input-group-text">Rs/Day</span>
+        </div>
+
+        <label class="form-label">For teachers</label>
+        <div class="input-group">
+          <input type="number" name="fineTeach" class="form-control" required value="{{ settings.fineTeach }}">
+          <span class="input-group-text">Rs/Day</span>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+{% endblock %}
