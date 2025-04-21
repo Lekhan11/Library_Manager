@@ -23,6 +23,6 @@ path('bulkaddbooks',bulkAddBooks, name='bulkadd_books'),
 path('settings',settings,name='settings'),
 path('get-book-details/', get_book_details, name='get_book_details'),
 path('get-user-role-due/',  get_user_role_due, name='get_user_role_due'),
-path('get-fine/', get_fine, name='get_fine'),
+path('fine/', fine , name='fine'),
 
 ]

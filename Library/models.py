@@ -87,3 +87,14 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.transaction_type} - {self.book.title} by {self.user.username}"
+    
+    from django.db import models
+
+class Fine(models.Model):
+
+    user_id = models.CharField(max_length=50)
+    book_id = models.CharField(max_length=50, null=True, blank=True)
+    fine_amount = models.DecimalField(max_digits=6, decimal_places=2)
+    
+    def __str__(self):
+        return f"{self.user_id} - ${self.fine_amount}"

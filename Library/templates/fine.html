@@ -1,0 +1,24 @@
+<!-- fine_collection.html -->
+{% extends 'base.html' %}
+
+{% block title %}Collect Fine{% endblock %}
+
+{% block content %}
+  <h3 class="text-center mb-4">Library Fine Collection</h3>
+  <form method="POST">
+    {% csrf_token %}  <!-- Only needed in Django -->
+    <div class="mb-3">
+      <label for="userId" class="form-label">User ID</label>
+      <input type="text" class="form-control" id="userId" name="user_id" placeholder="Enter User ID" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="fineAmount" class="form-label">Fine Amount ($)</label>
+      <input type="number" class="form-control" id="fineAmount" name="fine_amount" placeholder="Enter Fine Amount" required />
+    </div>
+
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary">Collect Fine</button>
+    </div>
+  </form>
+{% endblock %}
