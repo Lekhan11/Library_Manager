@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Bulk User Upload{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Bulk Upload Users</h2>
+
+    {% if messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="border p-4 rounded bg-light">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="role" class="form-label">User Type</label>
+            <select name="role" id="role" class="form-select" required>
+                <option value="">Select Role</option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="csv_file" class="form-label">Upload CSV File</label>
+            <input type="file" name="csv_file" id="csv_file" class="form-control" accept=".csv" required>
+        </div>
+        <button type="submit" class="btn btn-success">Upload</button>
+    </form>
+</div>
+{% endblock %}

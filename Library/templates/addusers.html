@@ -36,6 +36,8 @@
         <!-- Student Fields (Initially Hidden) -->
         <div id="studentFields" class="collapse">
           <div class="mb-3">
+            <span class="form-text text-muted"><i class="bi bi-info-circle-fill"></i> The maximum due date for students is {% if settings.maxDueStud %} {{settings.maxDueStud}} {% else %} 0 {% endif %} days</span>
+            <br>
             <label for="class_id" class="form-label">Class :</label>
             <select class="form-select" aria-label="Default select example" name="class_id" >
               <option selected disabled>Select The Class</option>
@@ -68,6 +70,8 @@
         <!-- Teacher Fields (Initially Hidden) -->
         <div id="teacherFields" class="collapse">
           <div class="mb-3">
+            <span class="form-text text-muted"><i class="bi bi-info-circle-fill"></i> The maximum due date for teachers is{% if settings.maxDueTeach %} {{settings.maxDueTeach}} {% else %} 0 {% endif %} days</span>
+            <br>
             <label for="teacher_id" class="form-label">Teacher ID :</label>
             <input type="text" class="form-control" id="teacher_id" name="teacher_id" >
           </div>

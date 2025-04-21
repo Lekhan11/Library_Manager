@@ -1,166 +1,320 @@
 {% extends 'base.html' %}
 {% block title %}View Users{% endblock %}
+
 {% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">View Users</h1>
 
-    <div class="container mt-5">
-        <h1 class="text-center">View Users</h1>
+    <!-- Display messages -->
+    {% if messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
 
-        <!-- Display messages -->
-        {% if messages %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <!-- Tab Navigation -->
+    <ul class="nav nav-pills" id="userTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {% if request.GET.tab != 'teacher' and not searched_teacher %}active{% endif %}" id="student-tab" data-bs-toggle="pill" href="#studentFields" role="tab">Students</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {% if request.GET.tab == 'teacher' or searched_teacher %}active{% endif %}" id="teacher-tab" data-bs-toggle="pill" href="#teacherFields" role="tab">Teachers</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-4" id="userTabsContent">
+
+        <!-- Search Form -->
+        <form action="{% url 'search_user'%}" method="post">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="userID" placeholder="Enter the staff id or student roll number...." required>
+                <button type="submit" class="btn btn-primary">Search <i class="bi bi-search"></i></button>
             </div>
-        {% endif %}
+        </form>
+        
 
-        <!-- Tab Navigation -->
-        <ul class="nav nav-pills" id="userTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="student-tab" data-bs-toggle="pill" href="#studentFields" role="tab" aria-controls="studentFields" aria-selected="true">Students</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="teacher-tab" data-bs-toggle="pill" href="#teacherFields" role="tab" aria-controls="teacherFields" aria-selected="false">Teachers</a>
-            </li>
-        </ul>
+        <!-- Students Tab -->
+        <div class="tab-pane fade {% if request.GET.tab != 'teacher' and not searched_teacher %}show active{% endif %}" id="studentFields" role="tabpanel">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Section</th>
+                        <th>Books Issued</th>
+                        <th>Books Pending</th>
+                        <th>Books Returned</th>
+                        <th>Fine</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if searched_student %}
+                    <tr>
+                        <td>{{ searched_student.roll_no }}</td>
+                        <td>{{ searched_student.name }}</td>
+                        <td>{{ searched_student.class_id }}</td>
+                        <td>{{ searched_student.section }}</td>
+                        <td>{{ searched_student.books_issued }} </td>
+                        <td>{{ searched_student.books_pending }} <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{searched_student.roll_no}}"><i class="bi bi-eye"></i></button></td>
+                        <td>{{ searched_student.books_returned }}</td>
+                        <td>{{searched_student.fine}}</td>
+                        <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ searched_student.id }}">Update</button></td>
+                        <td><a href="{% url 'delete_user' 'student' searched_student.id %}" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                    <div class="modal" id="issuedBooks{{searched_student.roll_no}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title">Issued Books</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% for book in searched_student.pending_books %}
+                                    <li>{{ book.book.title }} ({{book.book.isbn}})</li>
+                                {% empty %}
+                                    <li>No books issued</li>
+                                {% endfor %}                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Edit Modal for Searched Student -->
+                    <div class="modal" id="iss">
 
-        <!-- Tab Content -->
-        <div class="tab-content mt-4" id="userTabsContent">
-            <!-- Students Tab -->
-            <div class="tab-pane fade show active" id="studentFields" role="tabpanel" aria-labelledby="student-tab">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Roll No</th>
-                            <th>Name</th>
-                            <th>Class</th>
-                            <th>Section</th>
-                            <th>Books Issued</th>
-                            <th>Books Pending</th>
-                            <th>Books Returned</th>
-                            <th>Update</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in students %}
-                        <tr>
-                            <td>{{ user.roll_no }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.class_id }}</td>
-                            <td>{{ user.section }}</td>
-                            <td>{{ user.books_issued }}</td>
-                            <td>{{ user.books_pending }}</td>
-                            <td>{{ user.books_returned }}</td>
-                            <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ user.id }}">Update</button></td>
-                            <td><a href="{% url 'delete_user' 'student' user.id %}" class="btn btn-danger">Delete</a></td>
-                        </tr>
-                        <div class="modal" id="editUserModal{{ user.id }}" aria-hidden="true">
+                    </div>
+
+
+                    <div class="modal" id="editUserModal{{ searched_student.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="{% url 'update_user' 'student' searched_student.id %}">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Edit User</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3"><label>Name</label><input type="text" name="name" class="form-control" value="{{searched_student.name }}"></div>
+                                        <div class="mb-3"><label>Class</label><input type="text" name="class_id" class="form-control" value="{{searched_student.class_id }}"></div>
+                                        <div class="mb-3"><label>Section</label><input type="text" name="section" class="form-control" value="{{searched_student.section }}"></div>
+                                        <div class="mb-3"><label>Roll No</label><input type="text" name="roll_no" class="form-control" value="{{searched_student.roll_no }}"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                   
+
+                    {% elif students %}
+                    {% for user in students %}
+                    <tr>
+                        <td>{{ user.roll_no }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.class_id }}</td>
+                        <td>{{ user.section }}</td>
+                        <td>{{ user.books_issued }}</td>
+                        <td>{{ user.books_pending }}  <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{user.roll_no}}"><i class="bi bi-eye"></i></button></td>
+                        <td>{{ user.books_returned }}</td>
+                        <td>{{user.fine}}</td>
+                        <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ user.id }}">Update</button></td>
+                        <td><a href="{% url 'delete_user' 'student' user.id %}" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                        <div class="modal" id="issuedBooks{{user.roll_no}}">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h1 class="modal-title">Edit user</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <h1 class="modal-title">Issued Books</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form method="post" action="{% url 'update_user' 'student' user.id %}">
-                                            {% csrf_token %}
-                                            <div class="mb-3">
-                                                <label for="editName" class="col-form-label">Name :</label>
-                                                <input type="text" class="form-control" id="editUser" name="name" value="{{ user.name }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="editClass" class="col-form-label">Class :</label>
-                                                <input type="text" class="form-control" id="editClass" name="class_id" value="{{ user.class_id }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="editSection" class="col-form-label">Section :</label>
-                                                <input type="text" class="form-control" id="editSection" name="section" value="{{ user.section }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="editRoll" class="col-form-label">Roll No</label>
-                                                <input type="text" class="form-control" id="editRoll" name="roll_no" value="{{ user.roll_no }}">
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button class="btn btn-primary" type="submit">Confirm</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                                        {% for book in user.pending_books %}
+                                        <li>{{ book.book.title }} ({{book.book.isbn}})</li>
+                                    {% empty %}
+                                        <li>No books issued</li>
+                                    {% endfor %}                                    </div>
                                 </div>
                             </div>
                         </div>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5">No users found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Teachers Tab -->
-            <div class="tab-pane fade" id="teacherFields" role="tabpanel" aria-labelledby="teacher-tab">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Staff Id</th>
-                            <th>Name</th>
-                            <th>Department</th>
-                            <th>Update</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in teachers %}
-                        <tr>
-                            <td>{{ user.teacher_id }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.department }}</td>
-                            <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ user.id }}">Update</button></td>
-                            <td><a href="{% url 'delete_user' 'teacher' user.id %}" class="btn btn-danger">Delete</a></td>
-                        </tr>
-                        <div class="modal" id="editTeacherModal{{ user.id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
+                    <!-- Modal for each student -->
+                    <div class="modal" id="editUserModal{{ user.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="{% url 'update_user' 'student' user.id %}">
+                                    {% csrf_token %}
                                     <div class="modal-header">
-                                        <h1 class="modal-title">Edit user</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <h1 class="modal-title">Edit User</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form method="post" action="{% url 'update_user' 'teacher' user.id %}">
-                                            {% csrf_token %}
-                                            <div class="mb-3">
-                                                <label for="editName" class="col-form-label">Name :</label>
-                                                <input type="text" class="form-control" id="editName" name="name" value="{{ user.name }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="editDprt" class="col-form-label">Department :</label>
-                                                <input type="text" class="form-control" id="editDprt" name="department" value="{{ user.department }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="editID" class="col-form-label">Staff ID :</label>
-                                                <input type="text" class="form-control" id="editID" name="teacher_id" value="{{ user.teacher_id }}">
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button class="btn btn-primary" type="submit">Confirm</button>
-                                            </div>
-                                        </form>
+                                        <div class="mb-3"><label>Name</label><input type="text" name="name" class="form-control" value="{{ user.name }}"></div>
+                                        <div class="mb-3"><label>Class</label><input type="text" name="class_id" class="form-control" value="{{ user.class_id }}"></div>
+                                        <div class="mb-3"><label>Section</label><input type="text" name="section" class="form-control" value="{{ user.section }}"></div>
+                                        <div class="mb-3"><label>Roll No</label><input type="text" name="roll_no" class="form-control" value="{{ user.roll_no }}"></div>
                                     </div>
-                                </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5">No users found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <tr><td colspan="9" class="text-center">No users found.</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <!-- Student Pagination -->
+            <nav>
+                <ul class="pagination">
+                    {% if students.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?student_page={{ students.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    {% endif %}
+
+                    {% for num in students.paginator.page_range %}
+                        {% if students.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?student_page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if students.has_next %}
+                        <li class="page-item"><a class="page-link" href="?student_page={{ students.next_page_number }}">Next</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Teachers Tab -->
+        <div class="tab-pane fade {% if request.GET.tab == 'teacher' or searched_teacher %}show active{% endif %}" id="teacherFields" role="tabpanel">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Staff ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Fine</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if searched_teacher %}
+                    <tr>
+                        <td>{{ searched_teacher.teacher_id }}</td>
+                        <td>{{ searched_teacher.name }}</td>
+                        <td>{{ searched_teacher.department }}</td>
+                        <td>{{ searched_teacher.fine }}</td>
+                        <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ searched_teacher.id }}">Update</button></td>
+                        <td><a href="{% url 'delete_user' 'teacher' searched_teacher.id %}" class="btn btn-danger">Delete</a></td>
+                    </tr>
+                     <!-- Modal for Searched teacher -->
+                     <div class="modal" id="editTeacherModal{{ searched_teacher.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="{% url 'update_user' 'teacher' searched_teacher.id %}">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Edit User</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3"><label>Name</label><input type="text" name="name" class="form-control" value="{{searched_teacher.name }}"></div>
+                                        <div class="mb-3"><label>Department</label><input type="text" name="department" class="form-control" value="{{ searched_teacher.department }}"></div>
+                                        <div class="mb-3"><label>Staff ID</label><input type="text" name="teacher_id" class="form-control" value="{{searched_teacher.teacher_id }}"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {%elif teachers%}
+                    {% for user in teachers %}
+                    <tr>
+                        <td>{{ user.teacher_id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.department }}</td>
+                        <td>{{user.fine}}</td>
+                        <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ user.id }}">Update</button></td>
+                        <td><a href="{% url 'delete_user' 'teacher' user.id %}" class="btn btn-danger">Delete</a></td>
+                    </tr>
+
+                    <!-- Modal for each teacher -->
+                    <div class="modal" id="editTeacherModal{{ user.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="{% url 'update_user' 'teacher' user.id %}">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Edit User</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3"><label>Name</label><input type="text" name="name" class="form-control" value="{{ user.name }}"></div>
+                                        <div class="mb-3"><label>Department</label><input type="text" name="department" class="form-control" value="{{ user.department }}"></div>
+                                        <div class="mb-3"><label>Staff ID</label><input type="text" name="teacher_id" class="form-control" value="{{ user.teacher_id }}"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <tr><td colspan="5" class="text-center">No users found.</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <!-- Teacher Pagination -->
+            <nav>
+                <ul class="pagination">
+                    {% if teachers.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?teacher_page={{ teachers.previous_page_number }}&tab=teacher">Previous</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    {% endif %}
+
+                    {% for num in teachers.paginator.page_range %}
+                        {% if teachers.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?teacher_page={{ num }}&tab=teacher">{{num}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if teachers.has_next %}
+                        <li class="page-item"><a class="page-link" href="?teacher_page={{ teachers.next_page_number }}&tab=teacher">Next</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
     </div>
-
+</div>
 {% endblock %}
