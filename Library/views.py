@@ -743,3 +743,10 @@ def get_fine(request):
         # Debugging: print the exception error
         print(f"Error: {e}")
         return JsonResponse({'success': False, 'message': str(e)})
+    
+def fine(request):
+    # This line should be indented correctly
+    fine = Fine.objects.all()  # Fetch all fines from the database
+
+    # This line should also be indented correctly
+    return render(request, 'fine.html', {'fines': fine})
