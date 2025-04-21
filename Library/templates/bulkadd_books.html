@@ -3,22 +3,43 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Bulk Upload Books</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📚 Bulk Upload Books 
+            <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#sample" aria-expanded="false">
+                Show Sample Format
+            </button>
+        </h2>
+    </div>
 
-    <form method="post" enctype="multipart/form-data">
+    <!-- Collapsible Sample Format Section -->
+    <div class="collapse mb-4" id="sample">
+        <div class="card card-body bg-warning-subtle border border-warning">
+            <h5 class="text-dark fw-bold">Sample CSV Format:</h5>
+            <p class="mb-1"><strong>For Books:</strong></p>
+            <pre class="bg-light p-2 rounded"><code>Title,Author,ISBN,Publisher,Year,Category
+The Great Gatsby,F. Scott Fitzgerald,9780743273565,Scribner,1925,Fiction
+To Kill a Mockingbird,Harper Lee,9780061120084,J.B. Lippincott & Co.,1960,Fiction</code></pre>
+        </div>
+    </div>
+
+    <!-- Success Messages -->
+    {% if messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <!-- Upload Form -->
+    <form method="post" enctype="multipart/form-data" class="border p-4 rounded bg-light">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="csv_file" class="form-label">Upload file</label>
-            <input type="file" name="csv_file" id="csv_file" class="form-control" required>
+            <label for="csv_file" class="form-label">Upload CSV File</label>
+            <input type="file" name="csv_file" id="csv_file" class="form-control" accept=".csv" required>
         </div>
-        <button type="submit" class="btn btn-primary">Upload</button>
+        <button type="submit" class="btn btn-success">Upload</button>
     </form>
-    {% if messages %}
-        <div class="mt-4">
-            {% for message in messages %}
-                <div class="alert alert-info">{{ message }}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
 </div>
 {% endblock %}

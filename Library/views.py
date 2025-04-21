@@ -30,7 +30,6 @@ def LoginPage(request):
 @login_required(login_url='login')
 def HomePage(request):
     books = Book.objects.all()
-    
     book_ids = list(Book.objects.values_list('id', flat=True))  # Get all book IDs
     selected_ids = sample(book_ids, min(len(book_ids), 6))  # Pick 5 random IDs
     #books = Book.objects.filter(id__in=selected_ids)  # Fetch those books
@@ -594,7 +593,7 @@ def bulkAddBooks(request):
     return render(request, 'bulkadd_books.html')
 
 
-def settings(request):
+def settings_view(request):
     setting_instance = Setting.objects.first()  # Get the first (or only) row
 
     if request.method == 'POST':
@@ -602,11 +601,14 @@ def settings(request):
         maxDueTeach = request.POST.get('maxDueTeach')
         fineStud = request.POST.get('fineStud')
         fineTeach = request.POST.get('fineTeach')
+        logo = request.FILES.get('logo')
 
         if '' in [maxDueStud, maxDueTeach, fineStud, fineTeach]:
             messages.error(request, 'All fields are required')
             return redirect('settings')
+      
 
+            messages.success(request, 'Logo Updated Successfully')
         # If no settings row exists, create one
         if not setting_instance:
             setting_instance = Setting.objects.create(
@@ -618,6 +620,7 @@ def settings(request):
         else:
             # Update the existing row
             setting_instance.maxDueStud = maxDueStud
+            setting_instance.logo = logo
             setting_instance.maxDueTeach = maxDueTeach
             setting_instance.fineStud = fineStud
             setting_instance.fineTeach = fineTeach

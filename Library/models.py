@@ -74,6 +74,7 @@ class Setting(models.Model):
     maxDueTeach = models.IntegerField(default=0)
     fineStud = models.IntegerField(default=0)
     fineTeach = models.IntegerField(default=0)
+    logo = models.ImageField(upload_to='logo', blank=True, null=True)
     def __str__(self):
         return "Settings"
     

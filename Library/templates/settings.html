@@ -3,16 +3,19 @@
 {% block content %}
 
 <div class="col">
-  <form action="" method="post">
+  <form action="" method="post" enctype="multipart/form-data">  <!-- Added enctype here -->
     {% csrf_token %}
-        {% if messages %}
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-          {% for message in messages %}
-          <p>{{ message }}</p>
-          {% endfor %}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
+    
+    {% if messages %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    <!-- Return Date Settings -->
     <div class="card mb-3 border-primary">
       <div class="card-header border-primary">
         <h5 class="text-center">Return Date Settings</h5>
@@ -32,6 +35,7 @@
       </div>
     </div>
 
+    <!-- Fine Amount Settings -->
     <div class="card mb-3 border-primary">
       <div class="card-header border-primary">
         <h5 class="text-center">Fine Amount Settings</h5>
@@ -51,6 +55,19 @@
       </div>
     </div>
 
+    <!-- Logo Upload -->
+    <div class="card mb-3 border-primary">
+      <div class="card-header border-primary">
+        <h5 class="text-center">Set Logo</h5>
+      </div>
+      <div class="card-body">
+        <label for="logo" class="form-label">Upload Logo</label>
+        <div class="input-group">
+          <input type="file" name="logo" id="logo" class="form-control" accept=".jpeg,.jpg,.png"> <!-- Changed to file input -->
+        </div>
+      </div>
+    </div>
+    
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>
