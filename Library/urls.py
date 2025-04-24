@@ -26,5 +26,7 @@ path('settings',settings_view,name='settings'),
 path('get-book-details/', get_book_details, name='get_book_details'),
 path('get-user-role-due/',  get_user_role_due, name='get_user_role_due'),
 path('fine/', fine , name='fine'),
+path('get-user-fine/', get_user_fine, name='get_user_fine'),
+path('pay-user-fine/', pay_user_fine, name='pay_user_fine'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
