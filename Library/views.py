@@ -747,12 +747,10 @@ def get_fine(request):
 def fine(request): # Fetch all fines from the database
 
     # This line should also be indented correctly
-<<<<<<< HEAD
     return render(request, 'fine.html', {'fines': fine})
 
 def report(request):
     return render(request,'report.html')
-=======
     return render(request, 'fine.html')
 
 def get_user_fine(request):
@@ -812,4 +810,3 @@ def pay_user_fine(request):
         return JsonResponse({'success': False, 'message': 'User not found'})
     
     return JsonResponse({'success': False, 'message': 'Invalid request'})
->>>>>>> 8b4ef5b17e7f4e7958806e90815194c695f999eb

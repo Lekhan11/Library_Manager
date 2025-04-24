@@ -53,37 +53,8 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const returnDateInput = document.getElementById('returnDate');
-    const userIdInput = document.getElementById('studentId');
-    const bookIdInput = document.getElementById('bookId');
-    const fineLabel = document.getElementById('fineInfo');
-    const fineAmountSpan = document.getElementById('fineAmount');
-
-    returnDateInput.addEventListener('change', function () {
-      const returnDate = returnDateInput.value;
-      const userId = userIdInput.value.trim();
-      const bookId = bookIdInput.value.trim();
-
-      if (returnDate && userId && bookId) {
-        fetch(`/get-fine/?user_id=${userId}&book_id=${bookId}&return_date=${returnDate}`)
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              fineAmountSpan.textContent = data.fine;
-              fineLabel.style.display = 'block';
-            } else {
-              fineLabel.style.display = 'none';
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching fine:', error);
-            fineLabel.style.display = 'none';
-          });
-      }
-    });
-  });
-</script>
+<!-- Include your JavaScript file here if needed -->
+{% load static %}
+<script src="{% static 'js/script.js' %}"></script>
 
 {% endblock %}
