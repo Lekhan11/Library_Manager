@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %} Report {% endblock %}
+
+{% block content %}
+
+
+<form method="get">
+    <div class="mb-3">
+      <label for="start_date">From Date:</label>
+      <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="end_date">To Date:</label>
+      <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+  </form>
+  
+  {% if issued_books %}
+    <h4 class="mt-4">Issued Books from {{ start_date }} to {{ end_date }}</h4>
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Book</th>
+          <th>Issue Date</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for issue in issued_books %}
+          <tr>
+            <td>{{ issue.user }}</td>
+            <td>{{ issue.book.title }}</td>
+            <td>{{ issue.issue_date|date:"Y-m-d H:i" }}</td>
+            <td>{{ issue.due_date }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif start_date and end_date %}
+    <div class="alert alert-warning mt-3">No books were issued in this date range.</div>
+  {% endif %}
+  
+
+{% endblock %}
