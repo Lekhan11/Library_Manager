@@ -6,10 +6,15 @@
 {% block content %}
   <h3 class="text-center mb-4">Library Fine Collection</h3>
   <form id="fineForm">
-    {% csrf_token %}  <!-- Only needed in Django -->
+    {% csrf_token %}
+    
     <div class="mb-3">
       <label for="userId" class="form-label">User ID</label>
       <input type="text" class="form-control" id="user_id" name="user_id" placeholder="Enter User ID" required />
+    </div>
+
+    <!-- User info section, hidden by default -->
+    <div id="user_info" style="display: none;" class="mb-3">
       <p><strong>User Name:</strong> <span id="user_name_display"></span></p>
       <p><strong>Role:</strong> <span id="user_role_display"></span></p>
       <p><strong>Fine Amount:</strong> ₹<span id="user_fine_display"></span></p>
@@ -29,7 +34,7 @@
     let currentUserRole = "";
     let currentUserName = "";
     let currentUserId = "";
-  
+
     function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
@@ -44,18 +49,21 @@
       }
       return cookieValue;
     }
-  
+
     document.getElementById('user_id').addEventListener('input', function () {
       const userId = this.value.trim();
       currentUserId = userId;
-  
+
+      const userInfoSection = document.getElementById('user_info');
+
       if (userId === "") {
+        userInfoSection.style.display = 'none';
         document.getElementById('user_name_display').textContent = "";
         document.getElementById('user_role_display').textContent = "";
         document.getElementById('user_fine_display').textContent = "";
         return;
       }
-  
+
       fetch(`/get-user-fine/?user_id=${userId}`)
         .then(response => response.json())
         .then(data => {
@@ -65,24 +73,27 @@
             document.getElementById('user_name_display').textContent = data.name;
             document.getElementById('user_role_display').textContent = data.role;
             document.getElementById('user_fine_display').textContent = data.fine;
+            userInfoSection.style.display = 'block';
           } else {
             currentUserName = "";
             currentUserRole = "";
-            document.getElementById('user_name_display').textContent = "Not found";
-            document.getElementById('user_role_display').textContent = "-";
-            document.getElementById('user_fine_display').textContent = "0";
+            userInfoSection.style.display = 'none';
+            document.getElementById('user_name_display').textContent = "";
+            document.getElementById('user_role_display').textContent = "";
+            document.getElementById('user_fine_display').textContent = "";
           }
         });
     });
-  
+
     document.getElementById("fineForm").addEventListener("submit", function (e) {
-      e.preventDefault(); // Prevent form from submitting normally
+      e.preventDefault();
+
       const amount = parseInt(document.getElementById("paid_amount").value);
       if (isNaN(amount) || amount <= 0 || currentUserId === "" || currentUserRole === "") {
         alert("Please enter valid details.");
         return;
       }
-  
+
       fetch("/pay-user-fine/", {
         method: "POST",
         headers: {
@@ -95,8 +106,8 @@
           amount_paid: amount,
         }),
       })
-        .then((response) => response.json())
-        .then((data) => {
+        .then(response => response.json())
+        .then(data => {
           alert(data.message);
           if (data.success) {
             document.getElementById("user_fine_display").textContent = data.new_fine;
