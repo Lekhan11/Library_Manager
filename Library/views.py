@@ -744,12 +744,72 @@ def get_fine(request):
         print(f"Error: {e}")
         return JsonResponse({'success': False, 'message': str(e)})
     
-def fine(request):
-    # This line should be indented correctly
-    fine = Fine.objects.all()  # Fetch all fines from the database
+def fine(request): # Fetch all fines from the database
 
     # This line should also be indented correctly
+<<<<<<< HEAD
     return render(request, 'fine.html', {'fines': fine})
 
 def report(request):
     return render(request,'report.html')
+=======
+    return render(request, 'fine.html')
+
+def get_user_fine(request):
+    user_id = request.GET.get('user_id')
+    
+    # First check in Students
+    student = Students.objects.filter(roll_no=user_id).first()
+    if student:
+        return JsonResponse({
+            'success': True,
+            'role': 'Student',
+            'name': student.name,
+            'fine': student.fine
+        })
+    
+    # If not in Students, check in Teachers
+    teacher = Teacher.objects.filter(teacher_id=user_id).first()
+    if teacher:
+        return JsonResponse({
+            'success': True,
+            'role': 'Teacher',
+            'name': teacher.name,
+            'fine': teacher.fine
+        })
+
+    # If not found in both
+    return JsonResponse({'success': False, 'message': 'User not found'})
+
+import json
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def pay_user_fine(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_id = data.get("user_id")
+        role = data.get("role")
+        amount_paid = int(data.get("amount_paid", 0))
+
+        if role == "Student":
+            user = Students.objects.filter(roll_no=user_id).first()
+        elif role == "Teacher":
+            user = Teacher.objects.filter(teacher_id=user_id).first()
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid role'})
+
+        if user:
+            old_fine = user.fine
+            user.fine = max(0, user.fine - amount_paid)
+            user.save()
+            return JsonResponse({
+                'success': True,
+                'message': f'₹{amount_paid} fine paid successfully. Previous: ₹{old_fine}, Now: ₹{user.fine}',
+                'new_fine': user.fine
+            })
+
+        return JsonResponse({'success': False, 'message': 'User not found'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
+>>>>>>> 8b4ef5b17e7f4e7958806e90815194c695f999eb
