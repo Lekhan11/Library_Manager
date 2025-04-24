@@ -7,40 +7,45 @@
     <h3 class="text-center">Return Books</h3>
   </div>
   <div class="card-body">
-    <form method="POST" action="{%url 'return_book'%}">
+    <form method="POST" action="{% url 'return_book' %}" id="returnBookForm">
       {% csrf_token %}
       {% if messages %}
       <div class="alert alert-info alert-dismissible fade show" role="alert">
-          {% for message in messages %}
+        {% for message in messages %}
           <p>{{ message }}</p>
-          {% endfor %}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {% endfor %}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endif %}
       <div class="mb-3">
         <label for="bookId" class="form-label">Book ID</label>
-        <input type="text" class="form-control" id="bookId" name="book_id">
+        <input type="text" class="form-control" id="book_Id" name="book_id" required>
       </div>
       
       <div class="mb-3">
         <label for="studentId" class="form-label">User ID</label>
-        <input type="text" class="form-control" id="studentId" name="user_id">
+        <input type="text" class="form-control" id="user_Id" name="user_id" required>
       </div>
       
       <div class="mb-3">
         <label for="return_date" class="form-label">Return Date</label>
-        <input type="date" class="form-control" id="returnDate" name="returnDate">
+        <input type="date" class="form-control" id="return_Date" name="returnDate" required>
       </div>
 
       <div class="mb-3">
-        <label class="form-label fw-bold text-danger" id="fineInfo" style="display:none;">
-          Fine: ₹<span id="fineAmount">0</span>
+        <label class="form-label fw-bold text-danger" id="fine_Info" style="display:none;">
+          Fine: ₹<span id="fine_Amount">0</span>
+        </label>
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-bold text-danger" id="result" style="display:none;">
+          Result: <span id="result_Info">Unavailable</span>
         </label>
       </div>
       
       <div class="mb-3">
         <label for="condition" class="form-label">Book Condition</label>
-        <select name="condition" id="bookCondition" class="form-select">
+        <select name="condition" id="bookCondition" class="form-select" required>
           <option selected disabled>Select The Condition</option>
           <option value="Good">Good</option>
           <option value="Damaged">Damaged</option>
@@ -49,12 +54,10 @@
       <div class="mb-3">
         <button type="submit" class="btn btn-primary">Return</button>
       </div>
-      </form>
+    </form>
   </div>
 </div>
 
-<!-- Include your JavaScript file here if needed -->
 {% load static %}
-<script src="{% static 'js/script.js' %}"></script>
-
+<script src="{% static 'js/getFine.js' %}"></script>
 {% endblock %}

@@ -43,6 +43,11 @@
         </form>
     </div>
 </div>
+{% block scripts %}
 {% load static %}
-<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/getDueDate.js' %}"></script>
+<script src="{% static 'js/bookDetails.js' %}"></script>
+{% endblock %}
+
+
 {% endblock %}

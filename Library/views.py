@@ -816,11 +816,10 @@ def report(request):
     end_date = request.GET.get('end_date')
 
     if start_date and end_date:
-        issued_books = IssuedBooks.objects.filter(
-            issue_date__date__range=[start_date, end_date]
+        issued_books = Transaction.objects.filter(transaction_type='issue' ,date__range=[start_date, end_date                                                                                                                   ]
         )
     else:
-        issued_books = IssuedBooks.objects.all().order_by('-issue_date')
+        issued_books = Transaction.objects.all().order_by('-date')
 
     return render(request, 'report.html', {
         'issued_books': issued_books,
