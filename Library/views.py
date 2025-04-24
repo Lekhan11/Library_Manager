@@ -824,3 +824,4 @@ def report(request):
         'end_date': end_date
     })
     
+    
