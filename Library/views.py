@@ -810,3 +810,22 @@ def pay_user_fine(request):
         return JsonResponse({'success': False, 'message': 'User not found'})
     
     return JsonResponse({'success': False, 'message': 'Invalid request'})
+
+def report(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if start_date and end_date:
+        issued_books = IssuedBooks.objects.filter(
+            issue_date__date__range=[start_date, end_date]
+        )
+    else:
+        issued_books = IssuedBooks.objects.all().order_by('-issue_date')
+
+    return render(request, 'report.html', {
+        'issued_books': issued_books,
+        'start_date': start_date,
+        'end_date': end_date
+    })
+    
+    
