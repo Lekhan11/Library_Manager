@@ -5,20 +5,104 @@
 
 {% block content %}
   <h3 class="text-center mb-4">Library Fine Collection</h3>
-  <form method="POST">
+  <form id="fineForm">
     {% csrf_token %}  <!-- Only needed in Django -->
     <div class="mb-3">
       <label for="userId" class="form-label">User ID</label>
-      <input type="text" class="form-control" id="userId" name="user_id" placeholder="Enter User ID" required />
+      <input type="text" class="form-control" id="user_id" name="user_id" placeholder="Enter User ID" required />
+      <p><strong>User Name:</strong> <span id="user_name_display"></span></p>
+      <p><strong>Role:</strong> <span id="user_role_display"></span></p>
+      <p><strong>Fine Amount:</strong> ₹<span id="user_fine_display"></span></p>
     </div>
 
     <div class="mb-3">
-      <label for="fineAmount" class="form-label">Fine Amount</label>
-      <input type="number" class="form-control" id="fineAmount" name="fine_amount" placeholder="Enter Fine Amount" required />
+      <label for="paid_amount" class="form-label">Fine Amount</label>
+      <input type="number" class="form-control" id="paid_amount" min="0" name="fine_amount" placeholder="Enter Fine Amount" required />
     </div>
 
     <div class="d-grid">
       <button type="submit" class="btn btn-primary">Collect Fine</button>
     </div>
   </form>
+
+  <script>
+    let currentUserRole = "";
+    let currentUserName = "";
+    let currentUserId = "";
+  
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  
+    document.getElementById('user_id').addEventListener('input', function () {
+      const userId = this.value.trim();
+      currentUserId = userId;
+  
+      if (userId === "") {
+        document.getElementById('user_name_display').textContent = "";
+        document.getElementById('user_role_display').textContent = "";
+        document.getElementById('user_fine_display').textContent = "";
+        return;
+      }
+  
+      fetch(`/get-user-fine/?user_id=${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            currentUserName = data.name;
+            currentUserRole = data.role;
+            document.getElementById('user_name_display').textContent = data.name;
+            document.getElementById('user_role_display').textContent = data.role;
+            document.getElementById('user_fine_display').textContent = data.fine;
+          } else {
+            currentUserName = "";
+            currentUserRole = "";
+            document.getElementById('user_name_display').textContent = "Not found";
+            document.getElementById('user_role_display').textContent = "-";
+            document.getElementById('user_fine_display').textContent = "0";
+          }
+        });
+    });
+  
+    document.getElementById("fineForm").addEventListener("submit", function (e) {
+      e.preventDefault(); // Prevent form from submitting normally
+      const amount = parseInt(document.getElementById("paid_amount").value);
+      if (isNaN(amount) || amount <= 0 || currentUserId === "" || currentUserRole === "") {
+        alert("Please enter valid details.");
+        return;
+      }
+  
+      fetch("/pay-user-fine/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({
+          user_id: currentUserId,
+          role: currentUserRole,
+          amount_paid: amount,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          alert(data.message);
+          if (data.success) {
+            document.getElementById("user_fine_display").textContent = data.new_fine;
+            document.getElementById("paid_amount").value = "";
+          }
+        });
+    });
+  </script>
 {% endblock %}
