@@ -28,5 +28,6 @@ path('get-user-role-due/',  get_user_role_due, name='get_user_role_due'),
 path('fine/', fine , name='fine'),
 path('get-user-fine/', get_user_fine, name='get_user_fine'),
 path('pay-user-fine/', pay_user_fine, name='pay_user_fine'),
+path('report/', report, name='report'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
