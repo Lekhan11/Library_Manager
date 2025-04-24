@@ -750,3 +750,6 @@ def fine(request):
 
     # This line should also be indented correctly
     return render(request, 'fine.html', {'fines': fine})
+
+def report(request):
+    return render(request,'report.html')
