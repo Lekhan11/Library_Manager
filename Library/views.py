@@ -272,7 +272,7 @@ def updateUser(request,role,id):
             if name == '' or teacher_id == '' or department == '':
                 messages.error(request, 'All fields are required')
                 return redirect('view_users')
-            elif Teacher.objects.filter(teacher_id=teacher_id).exists():
+            elif Teacher.objects.filter(teacher_id=teacher_id,name=name,department=department).exists():
                 messages.error(request, 'User already exists')
                 return redirect('view_users')
             else:
@@ -293,7 +293,7 @@ def updateUser(request,role,id):
             if name == '' or class_id == '' or roll_no == '' or section == '':
                 messages.error(request, 'All fields are required')
                 return redirect('view_users')
-            elif Students.objects.filter(roll_no=roll_no).exists():
+            elif Students.objects.filter(roll_no=roll_no,name=name,class_id=class_id,section=section).exists():
                 messages.error(request, 'User already exists')
                 return redirect('view_users')
             else:
@@ -812,19 +812,20 @@ def pay_user_fine(request):
     return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 def report(request):
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-
-    if start_date and end_date:
-        issued_books = Transaction.objects.filter(transaction_type='issue' ,date__range=[start_date, end_date                                                                                                                   ]
-        )
-    else:
-        issued_books = Transaction.objects.all().order_by('-date')
-
-    return render(request, 'report.html', {
-        'issued_books': issued_books,
+    if request.method == 'POST':
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        transacType = request.POST.get('type')
+        if start_date and end_date and transacType:
+            books = Transaction.objects.filter(transaction_type=transacType ,date__range=[start_date, end_date])
+            context={
+        'books': books,
         'start_date': start_date,
         'end_date': end_date
-    })
+    }
+            return render(request, 'report.html', context)
+        else:
+            messages.error(request, 'All fields are required')
+            return redirect('report')
     
-    
+    return render(request, 'report.html')

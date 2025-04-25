@@ -1,86 +1,110 @@
 {% extends 'base.html' %}
-<<<<<<< HEAD
-{% block title %}View Users{% endblock %}
-=======
 {% block title %}Add Book{% endblock %}
 
->>>>>>> 8b4ef5b17e7f4e7958806e90815194c695f999eb
 {% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="text-center flex-grow-1">Add Book</h3>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategory">Add Category</button>
+        </div>
 
-<div class="card container-fluid">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h3 class="text-center" style="padding-left: 45%;">Add Books</h3>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategory" aria-hidden="true">Add Category</button>
-    </div>
+        <div class="card-body">
+            <!-- Add Book Form -->
+            <form method="POST" action="">
+                {% csrf_token %}
+                {% if messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    {% for message in messages %}
+                    <p>{{ message }}</p>
+                    {% endfor %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
 
-    <div class="card-body">
-        <!-- Add Book Form -->
-        <form method="POST" action="">
-            {% csrf_token %}
-            {% if messages %}
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                {% for message in messages %}
-                <p>{{ message }}</p>
-                {% endfor %}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endif %}
+                <!-- Book ID -->
+                <div class="mb-3">
+                    <label for="book_id" class="form-label">Book ID :</label>
+                    <input type="text" class="form-control" id="book_id" name="isbn_code" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid Book ID.
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label for="book_id" class="form-label">Book ID :</label>
-                <input type="text" class="form-control" id="book_id" name="isbn_code">
-            </div>
+                <!-- Book Name -->
+                <div class="mb-3">
+                    <label for="book_name" class="form-label">Book Name :</label>
+                    <input type="text" class="form-control" id="book_name" name="book_name" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid book name.
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label for="book_name" class="form-label">Book Name :</label>
-                <input type="text" class="form-control" id="book_name" name="book_name">
-            </div>
+                <!-- Author -->
+                <div class="mb-3">
+                    <label for="author" class="form-label">Author :</label>
+                    <input type="text" class="form-control" id="author" name="author" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid author name.
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label for="author" class="form-label">Author :</label>
-                <input type="text" class="form-control" id="author" name="author">
-            </div>
+                <!-- Publication -->
+                <div class="mb-3">
+                    <label for="publication" class="form-label">Publication :</label>
+                    <input type="text" class="form-control" id="publication" name="publications" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid publication name.
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label for="publication" class="form-label">Publication :</label>
-                <input type="text" class="form-control" id="publication" name="publications">
-            </div>
-
-            <div class="mb-3">
-                <label for="category" class="form-label">Category :</label>
-                <select name="category" id="category" class="form-select" aria-hidden="false" >
-                    <option selected disabled>Select The Category</option>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                    
+                <!-- Category -->
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category :</label>
+                    <select name="category" id="category" class="form-select" required>
+                        <option selected disabled>Select The Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endfor %}
-                </select>
-            </div>
+                    </select>
+                    <div class="invalid-feedback">
+                        Please select a category.
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label for="quantity" class="form-label">Quantity :</label>
-                <input type="text" class="form-control" id="quantity" name="quantity">
-            </div>
+                <!-- Quantity -->
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity :</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" required min="1">
+                    <div class="invalid-feedback">
+                        Please provide a valid quantity (at least 1).
+                    </div>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Add Book</button>
-        </form>
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary w-100">Add Book</button>
+            </form>
+        </div>
     </div>
 </div>
 
 <!-- Add Category Modal -->
-<div class="modal" id="addCategory">
+<div class="modal fade" id="addCategory" tabindex="-1" aria-labelledby="addCategoryLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="">
                 {% csrf_token %}
                 <div class="modal-header">
-                    <h3 class="modal-title">Add Category</h3>
+                    <h5 class="modal-title" id="addCategoryLabel">Add Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="new_category" class="form-label">New Category:</label>
                         <input type="text" class="form-control" id="new_category" name="new_category" required>
+                        <div class="invalid-feedback">
+                            Please provide a category name.
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

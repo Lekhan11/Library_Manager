@@ -21,7 +21,7 @@
     </div>
 
     <div class="mb-3">
-      <label for="paid_amount" class="form-label">Fine Amount</label>
+      <label for="paid_amount" class="form-label">Paying Amount</label>
       <input type="number" class="form-control" id="paid_amount" min="0" name="fine_amount" placeholder="Enter Fine Amount" required />
     </div>
 
@@ -29,9 +29,6 @@
       <button type="submit" class="btn btn-primary">Collect Fine</button>
     </div>
   </form>
-
-
-    {% load static %}
-    <script src="{% static 'js/getFine.js' %}"></script>    
-    
+  {% load static %}
+  <script src="{% static 'js/getUserFine.js' %}"></script>
 {% endblock %}
