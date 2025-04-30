@@ -10,6 +10,9 @@ from django.core.paginator import Paginator
 import csv
 from django.http import JsonResponse
 from datetime import datetime
+from datetime import timedelta
+from django.http import HttpResponse
+
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -42,7 +45,7 @@ def HomePage(request):
     total_issued = transaction.filter(transaction_type='issue').count()
     total_returned = transaction.filter(transaction_type='return').count()
     total_pending = total_issued - total_returned
-    issued_thisMonth = transaction.filter(date__month=datetime.now().month).count()
+    issued_thisMonth = transaction.filter(date__month=datetime.now().month,transaction_type='issue').count()
     returned_thisMonth = transaction.filter(date__month=datetime.now().month, transaction_type='return').count()
     pending_thisMonth = issued_thisMonth - returned_thisMonth
     context = {'total_books':total_books, 'total_students':total_students, 'total_teachers':total_teachers, 'total_issued':total_issued, 'total_returned':total_returned, 'total_pending':total_pending, 'issued_thisMonth':issued_thisMonth, 'returned_thisMonth':returned_thisMonth, 'pending_thisMonth':pending_thisMonth} 
@@ -385,11 +388,11 @@ def returnBook(request):
         book.quantity += 1
         book.save()
         transaction = Transaction(
-            user=user,
-            book=book,
-            transaction_type='return',
-            date=return_date
-        )
+    user=user,
+    book=book,
+    transaction_type='return',
+    date=datetime.combine(return_date_obj, datetime.min.time())  # at 00:00 time
+)
         transaction.save()
 
         messages.success(request, f"The book has been successfully returned! Fine: ₹{fine}")
@@ -539,7 +542,7 @@ def bulkAdd(request):
 
     return render(request, 'bulkAdd.html')
 
-import csv
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Book, Category
@@ -811,21 +814,116 @@ def pay_user_fine(request):
     
     return JsonResponse({'success': False, 'message': 'Invalid request'})
 
+from datetime import datetime
+from django.db.models import Q
 def report(request):
     if request.method == 'POST':
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         transacType = request.POST.get('type')
+
         if start_date and end_date and transacType:
-            books = Transaction.objects.filter(transaction_type=transacType ,date__range=[start_date, end_date])
-            context={
-        'books': books,
-        'start_date': start_date,
-        'end_date': end_date
-    }
+            # Convert the start date and end date to date objects
+            start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+            # To ensure the end date includes the full day (up to 23:59:59), 
+            # we add 1 day to the end date and set it to the start of the next day.
+            end_date_obj = end_date_obj + timedelta(days=1)
+
+            # Now, we filter the transactions including the full day of the end date
+            books = Transaction.objects.filter(
+                transaction_type=transacType,
+                date__range=[start_date_obj, end_date_obj]
+            )
+
+            # Handle late returns
+            if transacType == 'late_return':
+                late_returns = []
+
+                # Fetch returned books within the selected date range
+                returned_books_qs = ReturnedBooks.objects.filter(
+                    return_date__range=[start_date_obj, end_date_obj]
+                )
+
+                for record in returned_books_qs:
+                    issue_txn = Transaction.objects.filter(
+                        transaction_type='issue',
+                        book=record.book,
+                        content_type=ContentType.objects.get_for_model(record.user),
+                        object_id=record.user.id,
+                        date__lte=record.return_date
+                    ).order_by('-date').first()
+
+                    if issue_txn:
+                        issue_date = issue_txn.date.date()
+                        due_date = issue_date + timedelta(days=15)
+
+                        if record.return_date > due_date:
+                            days_late = (record.return_date - due_date).days
+                            late_returns.append({
+                                'user': record.user,
+                                'book': record.book,
+                                'return_date': record.return_date,
+                                'due_date': due_date,
+                                'days_late': days_late
+                            })
+
+                context = {
+                    'books': books,
+                    'late_returns': late_returns,
+                    'start_date': start_date,
+                    'end_date': end_date,
+                    'type': transacType
+                }
+                return render(request, 'report.html', context)
+
+            # If not 'late_return', simply render the filtered transactions
+            context = {
+                'books': books,
+                'start_date': start_date,
+                'end_date': end_date,
+                'type': transacType
+            }
             return render(request, 'report.html', context)
+
         else:
             messages.error(request, 'All fields are required')
             return redirect('report')
-    
+
     return render(request, 'report.html')
+def download_sample(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="sample_users.csv"'
+
+    writer = csv.writer(response)
+
+    # Sample header for Students
+    writer.writerow(['Name', 'Roll No', 'Class ID', 'Section'])
+    writer.writerow(['John Doe', '23CS101', 'CS101', 'A'])
+    writer.writerow(['Jane Smith', '23CS102', 'CS101', 'B'])
+
+    writer.writerow([])  # Empty row
+
+    # Sample header for Teachers
+    writer.writerow(['Name', 'Teacher ID', 'Department'])
+    writer.writerow(['Dr. Kumar', 'TCH001', 'Physics'])
+    writer.writerow(['Mrs. Rao', 'TCH002', 'Mathematics'])
+
+    return response
+
+
+def download_book_sample(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="sample_books.csv"'
+
+    writer = csv.writer(response)
+
+    # Write the header row
+    writer.writerow(['Title', 'Author', 'ISBN', 'Publisher', 'Year', 'Category'])
+    
+    # Write sample data rows
+    writer.writerow(['The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 'Scribner', '1925', 'Fiction'])
+    writer.writerow(['To Kill a Mockingbird', 'Harper Lee', '9780061120084', 'J.B. Lippincott & Co.', '1960', 'Fiction'])
+
+    return response

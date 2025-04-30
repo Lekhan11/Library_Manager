@@ -31,5 +31,8 @@ path('get-fine/', get_fine, name='get_fine'),
 path('get-user-fine/', get_user_fine, name='get_user_fine'),
 path('pay-user-fine/', pay_user_fine, name='pay_user_fine'),
 path('report/', report, name='report'),
+path('download-sample/', download_sample, name='download_sample'),
+path('download-book-sample/', download_book_sample, name='download_book_sample'),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
