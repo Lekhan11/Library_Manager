@@ -10,10 +10,6 @@ from django.core.paginator import Paginator
 import csv
 from django.http import JsonResponse
 from datetime import datetime
-from datetime import timedelta
-from django.http import HttpResponse
-from django.db.models import Count
-
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -918,38 +914,3 @@ def report(request):
             return redirect('report')
 
     return render(request, 'report.html')
-def download_sample(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="sample_users.csv"'
-
-    writer = csv.writer(response)
-
-    # Sample header for Students
-    writer.writerow(['Name', 'Roll No', 'Class ID', 'Section'])
-    writer.writerow(['John Doe', '23CS101', 'CS101', 'A'])
-    writer.writerow(['Jane Smith', '23CS102', 'CS101', 'B'])
-
-    writer.writerow([])  # Empty row
-
-    # Sample header for Teachers
-    writer.writerow(['Name', 'Teacher ID', 'Department'])
-    writer.writerow(['Dr. Kumar', 'TCH001', 'Physics'])
-    writer.writerow(['Mrs. Rao', 'TCH002', 'Mathematics'])
-
-    return response
-
-
-def download_book_sample(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="sample_books.csv"'
-
-    writer = csv.writer(response)
-
-    # Write the header row
-    writer.writerow(['Accession Number','Title', 'Author', 'ISBN', 'Publisher', 'Year', 'Category'])
-    
-    # Write sample data rows
-    writer.writerow(['EEC23001','The Great Gatsby', 'F. Scott Fitzgerald', '9780743273565', 'Scribner', '1925', 'Fiction'])
-    writer.writerow(['EEC24001','To Kill a Mockingbird', 'Harper Lee', '9780061120084', 'J.B. Lippincott & Co.', '1960', 'Fiction'])
-
-    return response
