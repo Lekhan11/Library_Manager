@@ -12,24 +12,24 @@
       {% if messages %}
       <div class="alert alert-info alert-dismissible fade show" role="alert">
         {% for message in messages %}
-          <p>{{ message }}</p>
+        <p>{{ message }}</p>
         {% endfor %}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endif %}
       <div class="mb-3">
-        <label for="bookId" class="form-label">Book ID</label>
+        <label for="book_Id" class="form-label">Accession Number</label>
         <input type="text" class="form-control" id="book_Id" name="book_id" required>
       </div>
       
       <div class="mb-3">
-        <label for="studentId" class="form-label">User ID</label>
+        <label for="user_Id" class="user_id">User ID</label>
         <input type="text" class="form-control" id="user_Id" name="user_id" required>
       </div>
       
       <div class="mb-3">
-        <label for="return_date" class="form-label">Return Date</label>
-        <input type="date" class="form-control" id="return_Date" name="returnDate" required>
+        <label for="return_Date" class="form-label">Return Date</label>
+        <input type="date" class="form-control" id="return_Date" name="returnDate" value="{{ date }}" readonly>
       </div>
 
       <div class="mb-3">
@@ -37,6 +37,13 @@
           Fine: ₹<span id="fine_Amount">0</span>
         </label>
       </div>
+      
+      <div class="mb-3" id="loadingSpinner" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
       <div class="mb-3">
         <label class="form-label fw-bold text-danger" id="result" style="display:none;">
           Result: <span id="result_Info">Unavailable</span>
@@ -44,7 +51,7 @@
       </div>
       
       <div class="mb-3">
-        <label for="condition" class="form-label">Book Condition</label>
+        <label for="bookCondition" class="form-label">Book Condition</label>
         <select name="condition" id="bookCondition" class="form-select" required>
           <option selected disabled>Select The Condition</option>
           <option value="Good">Good</option>
@@ -60,4 +67,5 @@
 
 {% load static %}
 <script src="{% static 'js/getFine.js' %}"></script>
+
 {% endblock %}

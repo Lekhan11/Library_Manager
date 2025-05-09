@@ -24,10 +24,10 @@
 
                 <!-- Book ID -->
                 <div class="mb-3">
-                    <label for="book_id" class="form-label">Book ID :</label>
-                    <input type="text" class="form-control" id="book_id" name="isbn_code" required>
+                    <label for="book_id" class="form-label">Accession Number :</label>
+                    <input type="text" class="form-control" id="book_id" name="book_id" required>
                     <div class="invalid-feedback">
-                        Please provide a valid Book ID.
+                        Please provide a valid Book Accession Number.
                     </div>
                 </div>
 
@@ -46,6 +46,14 @@
                     <input type="text" class="form-control" id="author" name="author" required>
                     <div class="invalid-feedback">
                         Please provide a valid author name.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="isbn" class="form-label">ISBN :</label>
+                    <input type="number" class="form-control" id="isbn" name="isbn" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid isbn.
                     </div>
                 </div>
 

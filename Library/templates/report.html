@@ -29,7 +29,8 @@
           <option disabled {% if not type %}selected{% endif %}>Select The Type</option>
           <option value="issue" {% if type == "issue" %}selected{% endif %}>Issued</option>
           <option value="return" {% if type == "return" %}selected{% endif %}>Returned</option>
-        </select>
+          <option value="late_return" {% if type == "late_return" %}selected{% endif %}>Returned After Due</option>
+        </select>        
       </div>
       <div class="col-md-2 text-center">
         <button type="submit" class="btn btn-primary w-100">
@@ -61,10 +62,37 @@
         </tbody>
       </table>
     </div>
-  {% elif start_date and end_date %}
+
+  </div>
+  {% elif late_returns %}
+  <h3 class="mt-5 text-danger">🚨 Late Returns</h3>
+  <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Book</th>
+                <th>Return Date</th>
+                <th>Due Date</th>
+                <th>Days Late</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for item in late_returns %}
+          <tr>
+            <td>{{ item.user.name }}</td>
+            <td>{{ item.book.title }}</td>
+            <td>{{ item.return_date }}</td>
+            <td>{{ item.due_date }}</td>
+            <td>{{ item.days_late }} days</td>
+          </tr>
+      {% endfor %}
+      
+    </tbody>
+  </table>
+  {% else %}
     <div class="alert alert-warning mt-3 text-center">
       <i class="bi bi-info-circle-fill me-2"></i>No books were {{ type }} in this date range.
     </div>
   {% endif %}
-</div>
+
 {% endblock %}
