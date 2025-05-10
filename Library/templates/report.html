@@ -37,8 +37,8 @@
           <i class="bi bi-funnel-fill me-1"></i> Filter
         </button>
       </div>
+      
     </div>
-  </form>
 
   {% if books %}
     <h5 class="mt-4">Showing <strong>{{ type|title }}</strong> Books from <strong>{{ start_date }}</strong> to <strong>{{ end_date }}</strong></h5>
@@ -55,7 +55,7 @@
           {% for book in books %}
           <tr>
             <td>{{ book.user }}</td>
-            <td>{{ book.book.title }}</td>
+            <td>{{ book.book.accession_no }}</td>
             <td>{{ book.date|date:"Y-m-d H:i" }}</td>
           </tr>
           {% endfor %}
@@ -80,7 +80,7 @@
           {% for item in late_returns %}
           <tr>
             <td>{{ item.user.name }}</td>
-            <td>{{ item.book.title }}</td>
+            <td>{{ item.book.accession_no }}</td>
             <td>{{ item.return_date }}</td>
             <td>{{ item.due_date }}</td>
             <td>{{ item.days_late }} days</td>
@@ -94,5 +94,10 @@
       <i class="bi bi-info-circle-fill me-2"></i>No books were {{ type }} in this date range.
     </div>
   {% endif %}
-
+<div class="col-md-2 text-center">
+         <button type="submit" name="action" value="export" class="btn btn-success w-100">
+           <i class="bi bi-file-earmark-excel-fill me-1"></i> Export
+         </button>
+       </div>
+  </form>
 {% endblock %}

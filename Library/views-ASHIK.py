@@ -1,6 +1,5 @@
 from multiprocessing import context
-import re
-from turtle import pen, title
+from turtle import title
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth import *
@@ -14,6 +13,7 @@ from datetime import datetime
 from datetime import timedelta
 from django.http import HttpResponse
 from django.db.models import Count
+
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -58,7 +58,6 @@ def IssueBooks(request):
         user_id = request.POST.get('user_id')
         book_id = request.POST.get('book_id')
         issue_date = request.POST.get('issue_date')
-        print(issue_date)
         due_date = request.POST.get('due_date')
 
         if user_id == '' or book_id == '' or issue_date == '' or due_date == '':
@@ -242,22 +241,12 @@ def viewUsers(request):
     for student in students_list:
         issued = IssuedBooks.objects.filter(content_type=student_ct, object_id=student.id)
         returned = ReturnedBooks.objects.filter(content_type=student_ct, object_id=student.id)
-        
-        # Track the ids of returned books
         returned_ids = [r.book.id for r in returned]
-        
-        # List comprehension to get the pending books
-        student.pending_books = [b.book for b in issued if b.book.id not in returned_ids]
-        
-        # Count pending books including any re-issued ones after return
-        student.pending_books_count = len(student.pending_books)
-        
-        # Add logic for re-issued books if necessary
-        reissued_books = [b.book for b in issued if b.book.id in returned_ids]
-        student.pending_books.extend(reissued_books)
-        print(set(student.pending_books))
-        # Remove duplicates if a book was returned and re-issued (so it appears only once)
-        student.pending_books = list(set(student.pending_books))
+        pending = [b for b in issued if b.book.id not in returned_ids]
+        student.books_returned = returned.count()
+        student.books_pending = len(pending)
+        student.pending_books = pending
+
     # Add book data to teachers
     for teacher in teachers_list:
         issued = IssuedBooks.objects.filter(content_type=teacher_ct, object_id=teacher.id)
@@ -347,7 +336,7 @@ def returnBook(request):
         book_condition = request.POST.get('condition')
 
         # Check if book exists
-        if not Accession_No.objects.filter(accession_no=book_id).exists():
+        if not Book.objects.filter(accession_no=book_id).exists():
             messages.error(request, 'Book not found')
             return redirect('return_book')
 
@@ -704,83 +693,78 @@ def get_user_role_due(request):
 
 from django.http import JsonResponse
 
-from django.http import JsonResponse
-from django.contrib.contenttypes.models import ContentType
-from datetime import datetime
-from .models import Students, Teacher, Accession_No, IssuedBooks, Setting
-
 def get_fine(request):
-    user_id = request.GET.get('user_id', '').strip()
-    book_id = request.GET.get('book_id', '').strip()
-    return_date = request.GET.get('return_date', '').strip()
+    user_id = request.GET.get('user_id')
+    book_id = request.GET.get('book_id')
+    return_date = request.GET.get('return_date')
 
     if not user_id or not book_id or not return_date:
         return JsonResponse({'success': False, 'message': 'Missing parameters'})
 
     try:
-        # 1. Get user (Student or Teacher)
-        user = None
-        user_content_type = None
+        # Check if the user is a Student or Teacher and set the appropriate ContentType
+        student_content_type = ContentType.objects.get_for_model(Students)
+        teacher_content_type = ContentType.objects.get_for_model(Teacher)
 
-        if Students.objects.filter(roll_no__iexact=user_id).exists():
-            user = Students.objects.get(roll_no__iexact=user_id)
-            user_content_type = ContentType.objects.get_for_model(Students)
-            print(f"Found Student: {user}")
-        elif Teacher.objects.filter(teacher_id__iexact=user_id).exists():
-            user = Teacher.objects.get(teacher_id__iexact=user_id)
-            user_content_type = ContentType.objects.get_for_model(Teacher)
-            print(f"Found Teacher: {user}")
+        # Try to find the user as either Student or Teacher
+        if Students.objects.filter(roll_no=user_id).exists():
+            user = Students.objects.get(roll_no=user_id)
+            user_content_type = student_content_type
+        elif Teacher.objects.filter(teacher_id=user_id).exists():
+            user = Teacher.objects.get(teacher_id=user_id)
+            user_content_type = teacher_content_type
         else:
             return JsonResponse({'success': False, 'message': 'User not found'})
 
-        # 2. Get Accession_No instance (Book copy)
+        # Get the book
         try:
-            book = Accession_No.objects.get(accession_no__iexact=book_id)
-            print(f"Found Book: {book}")
-        except Accession_No.DoesNotExist:
+            book = Accession_No.objects.get(accession_no=book_id)
+            print(book)
+        except Book.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'Book not found'})
 
-        # 3. Find issued record
+        # Get the issued book record for the user and book combination
         issued_book = IssuedBooks.objects.filter(
             content_type=user_content_type,
             object_id=user.id,
             book=book
-        ).first()
-
+        )
         if not issued_book:
             return JsonResponse({'success': False, 'message': 'This book is not issued to the user'})
 
-        print(f"Issued Book Record: {issued_book}")
-
-        # 4. Get settings
+        # Get the fine settings
         setting = Setting.objects.first()
         if not setting:
             return JsonResponse({'success': False, 'message': 'Settings not found'})
 
-        # 5. Fine calculation
+        # Calculate fine
+        fine = 0
         try:
             return_date_obj = datetime.strptime(return_date, '%Y-%m-%d').date()
         except ValueError:
-            return JsonResponse({'success': False, 'message': 'Invalid date format. Use YYYY-MM-DD.'})
+            return JsonResponse({'success': False, 'message': 'Invalid date format, expected YYYY-MM-DD'})
 
         due_date_obj = issued_book.due_date
+
+        # Debugging: print out due_date and return_date for comparison
         print(f"Due Date: {due_date_obj}, Return Date: {return_date_obj}")
 
-        fine = 0
+        # Calculate the fine if the book is returned late
         if return_date_obj > due_date_obj:
             days_late = (return_date_obj - due_date_obj).days
-            fine_per_day = setting.fineStud if isinstance(user, Students) else setting.fineTeach
-            fine = days_late * fine_per_day
-            print(f"Days Late: {days_late}, Fine Per Day: {fine_per_day}, Total Fine: {fine}")
+            fine = days_late * (setting.fineStud if isinstance(user, Students) else setting.fineTeach)
 
+            # Debugging: print out the fine calculation
+            print(f"Days Late: {days_late}, Fine: {fine}")
+
+        # Return fine in response
         return JsonResponse({'success': True, 'fine': fine})
 
     except Exception as e:
+        # Debugging: print the exception error
         print(f"Error: {e}")
-        return JsonResponse({'success': False, 'message': 'An error occurred. Please try again.'})
-
-
-
+        return JsonResponse({'success': False, 'message': str(e)})
+    
 def fine(request): # Fetch all fines from the database
 
     # This line should also be indented correctly
@@ -850,33 +834,32 @@ def pay_user_fine(request):
 
 from datetime import datetime
 from django.db.models import Q
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.http import HttpResponse
-from django.contrib.contenttypes.models import ContentType
-from datetime import datetime, timedelta
-import csv
-from .models import Transaction, ReturnedBooks  # Adjust import as per your project
-
 def report(request):
     if request.method == 'POST':
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         transacType = request.POST.get('type')
-        action = request.POST.get('action')  # To detect Filter or Export
 
         if start_date and end_date and transacType:
+            # Convert the start date and end date to date objects
             start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
-            end_date_obj = end_date_obj + timedelta(days=1)  # include full day
 
+            # To ensure the end date includes the full day (up to 23:59:59), 
+            # we add 1 day to the end date and set it to the start of the next day.
+            end_date_obj = end_date_obj + timedelta(days=1)
+
+            # Now, we filter the transactions including the full day of the end date
             books = Transaction.objects.filter(
                 transaction_type=transacType,
                 date__range=[start_date_obj, end_date_obj]
             )
 
+            # Handle late returns
             if transacType == 'late_return':
                 late_returns = []
+
+                # Fetch returned books within the selected date range
                 returned_books_qs = ReturnedBooks.objects.filter(
                     return_date__range=[start_date_obj, end_date_obj]
                 )
@@ -904,10 +887,6 @@ def report(request):
                                 'days_late': days_late
                             })
 
-                # Handle Export action
-                if action == 'export':
-                    return export_late_returns_csv(late_returns, start_date, end_date)
-
                 context = {
                     'books': books,
                     'late_returns': late_returns,
@@ -917,11 +896,7 @@ def report(request):
                 }
                 return render(request, 'report.html', context)
 
-            # Handle Export action for issue/return
-            if action == 'export':
-                return export_books_csv(books, start_date, end_date, transacType)
-
-            # Normal Filter action
+            # If not 'late_return', simply render the filtered transactions
             context = {
                 'books': books,
                 'start_date': start_date,
@@ -935,47 +910,6 @@ def report(request):
             return redirect('report')
 
     return render(request, 'report.html')
-
-
-# CSV Export Functions 👇
-
-def export_books_csv(books, start_date, end_date, transacType):
-    response = HttpResponse(content_type='text/csv')
-    filename = f"{transacType}_report_{start_date}_to_{end_date}.csv"
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-    writer = csv.writer(response)
-    writer.writerow(['User', 'Book Accession No', f'{transacType.title()} Date'])
-
-    for book in books:
-        writer.writerow([
-            str(book.user),  # Adjust if you want user.name
-            book.book.accession_no,
-            book.date.strftime('%Y-%m-%d %H:%M')
-        ])
-
-    return response
-
-
-def export_late_returns_csv(late_returns, start_date, end_date):
-    response = HttpResponse(content_type='text/csv')
-    filename = f"late_return_report_{start_date}_to_{end_date}.csv"
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Student', 'Book Accession No', 'Return Date', 'Due Date', 'Days Late'])
-
-    for item in late_returns:
-        writer.writerow([
-            str(item['user']),  # Adjust if you want item['user'].name
-            item['book'].accession_no,
-            item['return_date'].strftime('%Y-%m-%d'),
-            item['due_date'].strftime('%Y-%m-%d'),
-            item['days_late']
-        ])
-
-    return response
-
 def download_sample(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="sample_users.csv"'
