@@ -14,6 +14,10 @@ from datetime import datetime
 from datetime import timedelta
 from django.http import HttpResponse
 from django.db.models import Count
+from datetime import datetime
+from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+
 
 def LoginPage(request):
     if request.method == 'POST':
@@ -135,7 +139,6 @@ def addBook(request):
         new_category=request.POST.get('new_category')
         category = request.POST.get('category')
         accession_no = request.POST.get('book_id')
-        print(accession_no)
         if new_category:
             if Category.objects.filter(name=new_category).exists():
                 messages. error(request, 'Category already exists')
@@ -145,7 +148,7 @@ def addBook(request):
                 categoryInfo.save()
                 messages.error(request, 'Category Added Succesfully')
                 return redirect('add_book')
-        elif all([book_name, author, isbn, publications, quantity, category, accession_no]):
+        elif all([book_name, author, publications, category, accession_no]):
             if Accession_No.objects.filter(accession_no=accession_no).exists():
                 messages. error(request, 'Accession number already exists')
                 return redirect('add_book')
@@ -262,12 +265,22 @@ def viewUsers(request):
     for teacher in teachers_list:
         issued = IssuedBooks.objects.filter(content_type=teacher_ct, object_id=teacher.id)
         returned = ReturnedBooks.objects.filter(content_type=teacher_ct, object_id=teacher.id)
+        
+        # Track the ids of returned books
         returned_ids = [r.book.id for r in returned]
-        pending = [b for b in issued if b.book.id not in returned_ids]
-        teacher.books_returned = returned.count()
-        teacher.books_pending = len(pending)
-        teacher.pending_books = pending
-
+        
+        # List comprehension to get the pending books
+        teacher.pending_books = [b.book for b in issued if b.book.id not in returned_ids]
+        
+        # Count pending books including any re-issued ones after return
+        teacher.pending_books_count = len(teacher.pending_books)
+        
+        # Add logic for re-issued books if necessary
+        reissued_books = [b.book for b in issued if b.book.id in returned_ids]
+        teacher.pending_books.extend(reissued_books)
+        print(set(teacher.pending_books))
+        # Remove duplicates if a book was returned and re-issued (so it appears only once)
+        teacher.pending_books = list(set(teacher.pending_books))
     students = student_paginator.get_page(request.GET.get('student_page'))
     teachers = teacher_paginator.get_page(request.GET.get('teacher_page'))
 
@@ -447,7 +460,7 @@ def updateBook(request,id):
             messages.error(request, 'All fields are required')
             return redirect('view_books')
 
-        if Book.objects.filter(isbn=isbn).exclude(id=id).exists():
+        if Book.objects.filter(title=book_name,author=author).exclude(id=id).exists() or Book.objects.filter(isbn=isbn).exclude(id=id).exists():
             messages.error(request, 'Book ID already exists')
             return redirect('view_books')
 
@@ -481,39 +494,54 @@ def searchUser(request):
         user_id = request.POST.get('userID')
 
         # Check if student
-        if Students.objects.filter(roll_no=user_id).exists():
-            user = Students.objects.get(roll_no=user_id)
+        if Students.objects.filter(roll_no__icontains=user_id).exists():
+            user = Students.objects.get(roll_no__icontains=user_id)
             ct = ContentType.objects.get_for_model(Students)
 
-            issued_books = IssuedBooks.objects.filter(content_type=ct, object_id=user.id)
-            returned_books = ReturnedBooks.objects.filter(content_type=ct, object_id=user.id)
+            issued = IssuedBooks.objects.filter(content_type=ct, object_id=user.id)
+            returned = ReturnedBooks.objects.filter(content_type=ct, object_id=user.id)
+        
+        # Track the ids of returned books
+            returned_ids = [r.book.id for r in returned]
+        
+        # List comprehension to get the pending books
+            user.pending_books = [b.book for b in issued if b.book.id not in returned_ids]
 
-            returned_book_ids = [r.book.id for r in returned_books]
-            pending_books = [b for b in issued_books if b.book.id not in returned_book_ids]
-
-            user.pending_books = pending_books
-            user.books_returned = len(returned_books)
-            user.books_pending = len(pending_books)
-            # books_issued is stored in model directly
+        # Count pending books including any re-issued ones after return
+            user.pending_books_count = len(user.pending_books)
+        
+        # Add logic for re-issued books if necessary
+            reissued_books = [b.book for b in issued if b.book.id in returned_ids]
+            user.pending_books.extend(reissued_books)
+            print(set(user.pending_books))
+        # Remove duplicates if a book was returned and re-issued (so it appears only once)
+            user.pending_books = list(set(user.pending_books))
 
             return render(request, 'viewusers.html', {'searched_student': user})
 
         # Check if teacher
-        elif Teacher.objects.filter(teacher_id=user_id).exists():
-            user = Teacher.objects.get(teacher_id=user_id)
+        elif Teacher.objects.filter(teacher_id__icontains=user_id).exists():
+            user = Teacher.objects.get(teacher_id__icontains=user_id)
             ct = ContentType.objects.get_for_model(Teacher)
 
-            issued_books = IssuedBooks.objects.filter(content_type=ct, object_id=user.id)
-            returned_books = ReturnedBooks.objects.filter(content_type=ct, object_id=user.id)
-
-            returned_book_ids = [r.book.id for r in returned_books]
-            pending_books = [b for b in issued_books if b.book.id not in returned_book_ids]
-
-            user.pending_books = pending_books
-            user.books_returned = len(returned_books)
-            user.books_pending = len(pending_books)
-            # books_issued is stored in model directly
-
+            issued = IssuedBooks.objects.filter(content_type=ct, object_id=user.id)
+            returned = ReturnedBooks.objects.filter(content_type=ct, object_id=user.id)
+        
+        # Track the ids of returned books
+            returned_ids = [r.book.id for r in returned]
+        
+        # List comprehension to get the pending books
+            user.pending_books = [b.book for b in issued if b.book.id not in returned_ids]
+        
+        # Count pending books including any re-issued ones after return
+            user.pending_books_count = len(user.pending_books)
+        
+        # Add logic for re-issued books if necessary
+            reissued_books = [b.book for b in issued if b.book.id in returned_ids]
+            user.pending_books.extend(reissued_books)
+            print(set(user.pending_books))
+        # Remove duplicates if a book was returned and re-issued (so it appears only once)
+            user.pending_books = list(set(user.pending_books))
             return render(request, 'viewusers.html', {'searched_teacher': user})
 
         else:
@@ -525,17 +553,22 @@ def searchUser(request):
 
 def searchBook(request):
     if request.method == 'POST':
-        book_id = request.POST.get('bookID')
-        if Book.objects.filter(accession_no=book_id).exists():
-            book = Book.objects.get(accession_no=book_id)
-        elif Book.objects.filter(title=book_id).exists():
-            book = Book.objects.get(title=book_id)
-        elif Book.objects.filter(author=book_id).exists():
-            book = Book.objects.get(author=book_id)
+        bookid = request.POST.get('bookID')
+        book = None
+
+        if Accession_No.objects.filter(accession_no=bookid).exists():
+            book = Accession_No.objects.get(accession_no=bookid)
+        elif Accession_No.objects.filter(book_id__title__icontains=bookid).exists():
+            book = Accession_No.objects.filter(book_id__title__icontains=bookid).first()
+        elif Accession_No.objects.filter(book_id__author__icontains=bookid).exists():
+            book = Accession_No.objects.filter(book_id__author__icontains=bookid).first()
         else:
             messages.error(request, 'Book not found')
             return redirect('view_books')
+
+        book.access = Accession_No.objects.filter(book_id=book.book_id)
         return render(request, 'view_books.html', {'searched_book': book})
+    
     return redirect('view_books')
 
 def bulkAdd(request):
@@ -572,9 +605,6 @@ def bulkAdd(request):
     return render(request, 'bulkAdd.html')
 
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Book, Category
 
 def bulkAddBooks(request):
     if request.method == "POST":
@@ -669,6 +699,7 @@ def get_book_details(request):
     if book_id:
         # Try to get the book based on the book_id (or ISBN)
         book = Accession_No.objects.filter(accession_no=book_id).first()
+        avail =  'Available' if book.quantity > 0 else 'Not Available'
         if book:
             # Return book details as a JSON response
             book_details = {
@@ -676,6 +707,8 @@ def get_book_details(request):
                 'author': book.book_id.author,
                 'isbn': book.book_id.isbn,
                 'quantity': book.book_id.quantity,
+                'availability_status': avail,
+                
             }
             return JsonResponse({'success': True, 'book_details': book_details})
         else:
@@ -836,7 +869,7 @@ def pay_user_fine(request):
 
         if user:
             old_fine = user.fine
-            user.fine = max(0, user.fine - amount_paid)
+            user.fine = user.fine - amount_paid
             user.save()
             return JsonResponse({
                 'success': True,
@@ -848,15 +881,7 @@ def pay_user_fine(request):
     
     return JsonResponse({'success': False, 'message': 'Invalid request'})
 
-from datetime import datetime
-from django.db.models import Q
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.http import HttpResponse
-from django.contrib.contenttypes.models import ContentType
-from datetime import datetime, timedelta
-import csv
-from .models import Transaction, ReturnedBooks  # Adjust import as per your project
+
 
 def report(request):
     if request.method == 'POST':
@@ -1011,3 +1036,75 @@ def download_book_sample(request):
     writer.writerow(['EEC24001','To Kill a Mockingbird', 'Harper Lee', '9780061120084', 'J.B. Lippincott & Co.', '1960', 'Fiction'])
 
     return response
+
+def get_issued_user(request):
+    book_id = request.GET.get('book_id')
+    try:
+        accession = Accession_No.objects.get(accession_no=book_id)
+        issued_record = IssuedBooks.objects.get(book=accession, book__accession_no=book_id)
+
+        user_object = issued_record.user  # ✅ This is correct now
+        user_model_name = user_object._meta.model_name  # safer way
+
+        if user_model_name == 'students':
+            user_id = user_object.roll_no
+            user_type = 'Student'
+        elif user_model_name == 'teacher':
+            user_id = user_object.teacher_id
+            user_type = 'Teacher'
+        else:
+            return JsonResponse({'success': False, 'message': f'Issued user model not recognized. Got: {user_model_name}'})
+
+        return JsonResponse({
+            'success': True,
+            'user_id': user_id,
+            'user_type': user_type,
+            'name': user_object.name
+        })
+
+    except IssuedBooks.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Book is not currently issued to any user.'})
+    except Accession_No.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Invalid accession number.'})
+    
+def ajaxSearchUser(request):
+    if request.method == 'GET':
+        uid = request.GET.get('user_id', '')
+        if Students.objects.filter(
+            Q(roll_no__icontains=uid)
+        ).first():
+            user = Students.objects.filter(
+                Q(roll_no__icontains=uid)
+            ).first()
+            data = {
+                'role': 'student',
+                'name': user.name,
+                'roll_no': user.roll_no,
+                'class': user.class_id,
+                'section': user.section,
+                'issued_books': user.books_issued,
+                'returned_books': user.books_returned,
+                'pending_books': user.books_pending,
+                'fine': user.fine
+            }
+            return JsonResponse({'status': 'success', 'user': data})
+
+        elif Teacher.objects.filter(
+            Q(teacher_id__icontains=uid)
+        ).first():
+            user = Teacher.objects.filter(
+                Q(teacher_id__icontains=uid)
+            ).first()
+            data = {
+                'role': 'teacher',
+                'name': user.name,
+                'teacher_id': user.teacher_id,
+                'department': user.department,
+                'issued_books': user.books_issued,
+                'returned_books': user.books_returned,
+                'pending_books': user.books_pending,
+                'fine': user.fine
+            }
+            return JsonResponse({'status': 'success', 'user': data})
+
+        return JsonResponse({'status': 'not_found'})

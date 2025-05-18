@@ -211,6 +211,9 @@
                         <th>Staff ID</th>
                         <th>Name</th>
                         <th>Department</th>
+                        <th>Books Issued</th>
+                        <th>Books Pending</th>
+                        <th>Books Returned</th>
                         <th>Fine</th>
                         <th>Update</th>
                         <th>Delete</th>
@@ -222,10 +225,31 @@
                         <td>{{ searched_teacher.teacher_id }}</td>
                         <td>{{ searched_teacher.name }}</td>
                         <td>{{ searched_teacher.department }}</td>
+                        <td>{{ searched_teacher.books_issued }}</td>
+                        <td>{{ searched_teacher.books_pending }} <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{searched_teacher.teacher_id}}"><i class="bi bi-eye"></i></button></td>
+                        <td>{{ searched_teacher.books_returned }}</td>
                         <td>{{ searched_teacher.fine }}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ searched_teacher.id }}">Update</button></td>
                         <td><a href="{% url 'delete_user' 'teacher' searched_teacher.id %}" class="btn btn-danger">Delete</a></td>
                     </tr>
+
+                    <div class="modal" id="issuedBooks{{searched_teacher.teacher_id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title">Issued Books</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% for book in searched_teacher.pending_books %}
+                                    <li>{{ book.book.title }} ({{book.accession_no}})</li>
+                                {% empty %}
+                                    <li>No books issued</li>
+                                {% endfor %}                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
                      <!-- Modal for Searched teacher -->
                      <div class="modal" id="editTeacherModal{{ searched_teacher.id }}" aria-hidden="true">
                         <div class="modal-dialog">
@@ -255,10 +279,30 @@
                         <td>{{ user.teacher_id }}</td>
                         <td>{{ user.name }}</td>
                         <td>{{ user.department }}</td>
+                        <td>{{ user.books_issued }}</td>
+                        <td>{{ user.books_pending }} <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{user.teacher_id}}"><i class="bi bi-eye"></i></button></td>
+                        <td>{{ user.books_returned }}</td>
                         <td>{{user.fine}}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTeacherModal{{ user.id }}">Update</button></td>
                         <td><a href="{% url 'delete_user' 'teacher' user.id %}" class="btn btn-danger">Delete</a></td>
                     </tr>
+
+                    <div class="modal" id="issuedBooks{{user.teacher_id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title">Issued Books</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% for book in user.pending_books %}
+                                        <li>{{ book.book.title }} ({{book.accession_no}})</li>
+                                    {% empty %}
+                                        <li>No books issued</li>
+                                    {% endfor %}                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     <!-- Modal for each teacher -->
                     <div class="modal" id="editTeacherModal{{ user.id }}" aria-hidden="true">

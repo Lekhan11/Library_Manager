@@ -38,29 +38,29 @@
         <tbody>
             {% if searched_book %}
             <tr>
-                <td>{{ searched_book.isbn }}</td>
+                <td>{{ searched_book.book_id.isbn }}</td>
                 <td>
-                    {% if searched_book.accessions.all %}
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            View Accessions
-                        </button>
-                        <ul class="dropdown-menu">
-                            {% for acc in searched_book.accessions.all %}
-                            <li><a class="dropdown-item" href="#">{{ acc.accession_number }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+                   {% if searched_book.access %}
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            View Accessions
+        </button>
+        <ul class="dropdown-menu">
+            {% for acc in searched_book.access %}
+                <li><a class="dropdown-item" href="#">{{ acc.accession_no }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
                     {% else %}
                     No Copies
                     {% endif %}
                 </td>
-                <td>{{ searched_book.title }}</td>
-                <td>{{ searched_book.author }}</td>
-                <td>{{ searched_book.publisher }}</td>
+                <td>{{ searched_book.book_id.title }}</td>
+                <td>{{ searched_book.book_id.author }}</td>
+                <td>{{ searched_book.book_id.publisher }}</td>
                 <td>
-                    {% if searched_book.categories %}
-                        {% for category in searched_book.categories.all %}
+                    {% if searched_book.book_id.categories %}
+                        {% for category in searched_book.book_id.categories.all %}
                             {{ category.name }}{% if not forloop.last %}, {% endif %}
                         {% endfor %}
                     {% else %}
@@ -141,6 +141,48 @@
                 <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editBookModal{{ book.id }}">Update</button></td>
                 <td><a href="{% url 'delete_book' book.id %}" class="btn btn-danger">Delete</a></td>
             </tr>
+             <div class="modal" id="editBookModal{{ book.id }}" aria-hidden="true">
+            <!-- Modal content here -->
+            <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title">Edit Book</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'update_book' book.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="editTitle" class="col-form-label">Title:</label>
+                                    <input type="text" class="form-control" id="editTitle" name="title" value="{{ book.title }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editAuthor" class="col-form-label">Author:</label>
+                                    <input type="text" class="form-control" id="editAuthor" name="author" value="{{ book.author }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPublisher" class="col-form-label">Publisher:</label>
+                                    <input type="text" class="form-control" id="editPublisher" name="publisher" value="{{ book.publisher }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editISBN" class="col-form-label">ISBN:</label>
+                                    <input type="text" class="form-control" id="editISBN" name="isbn" value="{{book.isbn}}" >
+                                    <div class="modal-footer">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="editQuantity" class="col-form-label">Quantity:</label>
+                                    <input type="text" class="form-control" id="editQuantity" name="quantity" value="{{ book.quantity }}">
+                                </div>
+
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button class="btn btn-primary" type="submit">Confirm</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>             
+            </div>
+        </div>
             {% else %}
             <tr>
                 <td colspan="9" class="text-center">No books found.</td>

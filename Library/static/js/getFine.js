@@ -10,6 +10,30 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
+function fetchIssuedUser() {
+    const bookId = bookIdInput.value.trim();
+    if (bookId) {
+      fetch(`/get-issued-user/?book_id=${bookId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            userIdInput.value = data.user_id;
+            console.log("User ID fetched:", data.user_id);
+            checkFine();  // After auto-filling user, immediately check fine
+          } else {
+            userIdInput.value = '';
+            fineLabel.textContent = data.message;
+            fineAmountSpan.textContent = '0';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching issued user:', error);
+        });
+    }
+  }
+
+
+
   function checkFine() {
     const returnDate = returnDateInput.value;
     const userId = userIdInput.value.trim();
@@ -48,7 +72,5 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Listen to typing on all 3 fields
-  returnDateInput.addEventListener('input', checkFine);
-  userIdInput.addEventListener('input', checkFine);
-  bookIdInput.addEventListener('input', checkFine);
+  bookIdInput.addEventListener('input', fetchIssuedUser);
 });

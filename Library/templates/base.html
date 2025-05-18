@@ -14,7 +14,7 @@
     <!-- Fixed Top Navbar -->
     <nav class="navbar navbar-dark bg-dark fixed-top">
         {% if logo and logo.url %}
-        <img src="{{ logo.url }}" alt="Logo" class="rounded-circle me-2" style="height: 40px; width: 40px; object-fit: cover;">
+        <img src="{{ logo.url }}" alt="Logo" class="rounded-circle me-1" style="height: 40px; width: 40px; object-fit: cover;">
     {% else %}
     {% load static %}
     <img src="{% static 'images/library.jpg' %}" alt="Logo" class="rounded-circle me-2" style="height: 40px; width: 40px; object-fit: cover;">

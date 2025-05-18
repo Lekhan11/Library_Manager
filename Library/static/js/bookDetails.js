@@ -17,6 +17,7 @@
                                 <li><strong>Author:</strong> ${data.book_details.author}</li>
                                 <li><strong>ISBN:</strong> ${data.book_details.isbn}</li>
                                 <li><strong>Quantity:</strong> ${data.book_details.quantity}</li>
+                                <li><strong>Availability:</strong> ${data.book_details.availability_status}</li>
                             </ul>
                         `;
                     } else {
