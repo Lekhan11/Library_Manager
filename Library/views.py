@@ -606,6 +606,8 @@ def bulkAdd(request):
 
 
 
+import csv
+
 def bulkAddBooks(request):
     if request.method == "POST":
         csv_file = request.FILES.get("csv_file")
@@ -616,22 +618,23 @@ def bulkAddBooks(request):
 
         try:
             decoded_file = csv_file.read().decode('utf-8').splitlines()
-            reader = csv.reader(decoded_file)
-            next(reader)  # Skip header row
+            reader = csv.DictReader(decoded_file)  # <-- DictReader use pannrom
 
             count = 0
             for row in reader:
-                if len(row) < 6:
-                    continue
+                title = row.get('Title', '').strip()
+                author = row.get('Author', '').strip()
+                publisher = row.get('Publisher', '').strip()
+                quantity = int(row.get('Quantity', '0').strip())
+                category_names = row.get('Category', '').strip().split(',')
+                accession_number = row.get('Accession Number', '').strip()
+                isbn = row.get('ISBN', '').strip()
 
-                title = row[0].strip()
-                author = row[1].strip()
-                publisher = row[2].strip()
-                quantity = int(row[3].strip())
-                category_names = row[4].strip().split(',')
-                isbn = row[6].strip()
+                if not title or not accession_number:
+                    continue  # Skip invalid rows
 
                 book = Book.objects.create(
+                    accession_number=accession_number,
                     title=title,
                     author=author,
                     publisher=publisher,
@@ -653,6 +656,7 @@ def bulkAddBooks(request):
         return redirect('bulkadd_books')
 
     return render(request, 'bulkadd_books.html')
+
 
 
 def settings_view(request):
