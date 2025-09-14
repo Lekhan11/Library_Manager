@@ -161,8 +161,7 @@ def addBook(request):
                 if Accession_No.objects.filter(accession_no=accession_no).exists():
                     messages.error(request, 'Accession Number already exists')
                     return redirect('add_book')
-                
-                if Book.objects.filter(title=book_name, author=author, isbn=isbn).exists():
+                if Book.objects.filter(isbn=isbn).exists():
                     pass
                 else:
                     bookInfo = Book.objects.create(
@@ -173,7 +172,7 @@ def addBook(request):
                         availability_status='Available',
                     )
                     bookInfo.categories.add(category_obj)
-                bookDetail = Book.objects.get(title=book_name, author=author, isbn=isbn)
+                bookDetail = Book.objects.get(isbn=isbn)
                 Accession_No.objects.create(
                         accession_no=accession_no,
                         book_id=bookDetail
@@ -203,16 +202,16 @@ def addusers(request):
         department = request.POST.get('department')
         if name != '' and class_id != '' and roll_no != '' and section != '':
             if Students.objects.filter(roll_no=roll_no).exists():
-                messages. error(request, 'User already exists')
+                messages.error(request, 'User already exists')
                 return redirect('add_users')
             userinfo= Students(name=name, class_id=class_id, roll_no=roll_no, section=section)
         elif teacher_id != '' and department != '':
             if Teacher.objects.filter(teacher_id=teacher_id).exists():
-                messages. error(request, 'User already exists')
+                messages.error(request, 'User already exists')
                 return redirect('add_users')
             userinfo= Teacher(name=name, teacher_id=teacher_id, department=department)
         else:
-            messages. error(request, 'All fields are required')
+            messages.error(request, 'All fields are required')
             return redirect('add_users')
         try:
             userinfo.save()
@@ -252,15 +251,17 @@ def viewUsers(request):
         # List comprehension to get the pending books
         student.pending_books = [b.book for b in issued if b.book.id not in returned_ids]
         
-        # Count pending books including any re-issued ones after return
-        student.pending_books_count = len(student.pending_books)
+        
         
         # Add logic for re-issued books if necessary
         reissued_books = [b.book for b in issued if b.book.id in returned_ids]
         student.pending_books.extend(reissued_books)
-        print(set(student.pending_books))
+        
+        # Count pending books including any re-issued ones after return
+        student.pending_books_count = len(student.pending_books)
         # Remove duplicates if a book was returned and re-issued (so it appears only once)
         student.pending_books = list(set(student.pending_books))
+        student.book_detail = Accession_No.objects.filter(book_id__in=[b.id for b in student.pending_books])
     # Add book data to teachers
     for teacher in teachers_list:
         issued = IssuedBooks.objects.filter(content_type=teacher_ct, object_id=teacher.id)
@@ -278,9 +279,9 @@ def viewUsers(request):
         # Add logic for re-issued books if necessary
         reissued_books = [b.book for b in issued if b.book.id in returned_ids]
         teacher.pending_books.extend(reissued_books)
-        print(set(teacher.pending_books))
         # Remove duplicates if a book was returned and re-issued (so it appears only once)
         teacher.pending_books = list(set(teacher.pending_books))
+        teacher.book_detail = Accession_No.objects.filter(book_id__in=[b.id for b in teacher.pending_books])
     students = student_paginator.get_page(request.GET.get('student_page'))
     teachers = teacher_paginator.get_page(request.GET.get('teacher_page'))
 
@@ -562,10 +563,13 @@ def searchBook(request):
             book = Accession_No.objects.filter(book_id__title__icontains=bookid).first()
         elif Accession_No.objects.filter(book_id__author__icontains=bookid).exists():
             book = Accession_No.objects.filter(book_id__author__icontains=bookid).first()
+        elif Accession_No.objects.filter(book_id__isbn__icontains=bookid).exists():
+            book = Accession_No.objects.filter(book_id__isbn__icontains=bookid).first()
         else:
             messages.error(request, 'Book not found')
             return redirect('view_books')
-
+        print(book.book_id.id)
+        print(Book.objects.filter(id=book.book_id.id))
         book.access = Accession_No.objects.filter(book_id=book.book_id)
         return render(request, 'view_books.html', {'searched_book': book})
     
@@ -604,10 +608,6 @@ def bulkAdd(request):
 
     return render(request, 'bulkAdd.html')
 
-
-
-import csv
-
 def bulkAddBooks(request):
     if request.method == "POST":
         csv_file = request.FILES.get("csv_file")
@@ -625,16 +625,14 @@ def bulkAddBooks(request):
                 title = row.get('Title', '').strip()
                 author = row.get('Author', '').strip()
                 publisher = row.get('Publisher', '').strip()
-                quantity = int(row.get('Quantity', '0').strip())
+                quantity = int(row.get('Quantity', '1').strip())
                 category_names = row.get('Category', '').strip().split(',')
                 accession_number = row.get('Accession Number', '').strip()
                 isbn = row.get('ISBN', '').strip()
-
                 if not title or not accession_number:
                     continue  # Skip invalid rows
-
-                book = Book.objects.create(
-                    accession_number=accession_number,
+                if not Book.objects.filter(isbn=isbn).exists():
+                    book = Book.objects.create(
                     title=title,
                     author=author,
                     publisher=publisher,
@@ -642,12 +640,18 @@ def bulkAddBooks(request):
                     isbn=isbn,
                     availability_status='Available'
                 )
-
-                for cat_name in category_names:
-                    category, _ = Category.objects.get_or_create(name=cat_name.strip())
-                    book.categories.add(category)
-
-                count += 1
+                    for cat_name in category_names:
+                        category, _ = Category.objects.get_or_create(name=cat_name.strip())
+                        book.categories.add(category)
+                if Accession_No.objects.filter(accession_no=accession_number).exists():
+                    pass
+                else:
+                    bookDetail = Book.objects.filter(isbn=isbn).first()
+                    Accession_No.objects.create(
+                        accession_no=accession_number,
+                        book_id=bookDetail
+                )
+                    count += 1
 
             messages.success(request, f"Successfully added {count} books.")
         except Exception as e:
@@ -822,10 +826,6 @@ def fine(request): # Fetch all fines from the database
 
     # This line should also be indented correctly
     return render(request, 'fine.html', {'fines': fine})
-
-def report(request):
-    return render(request,'report.html')
-    return render(request, 'fine.html')
 
 def get_user_fine(request):
     user_id = request.GET.get('user_id')
@@ -1112,3 +1112,26 @@ def ajaxSearchUser(request):
             return JsonResponse({'status': 'success', 'user': data})
 
         return JsonResponse({'status': 'not_found'})
+
+def get_add_book_details(request):
+    book_id = request.GET.get('book_id')  # Get the book_id (or ISBN) from the GET request
+    if book_id:
+        # Try to get the book based on the book_id (or ISBN)
+        book = Book.objects.filter(isbn=book_id).first()
+        if book:
+            # Return book details as a JSON response
+            book_details = {
+                'title': book.title,
+                'author': book.author,
+                'isbn': book.isbn,
+                'quantity': book.quantity,
+                'availability_status': book.availability_status,
+                'publisher': book.publisher,
+                'categories': [cat.name for cat in book.categories.all()]
+                
+            }
+            return JsonResponse({'success': True, 'book_details': book_details})
+        else:
+            return JsonResponse({'success': False, 'message': 'Book not found'})
+    else:
+        return JsonResponse({'success': False, 'message': 'No book ID provided'})

@@ -30,10 +30,9 @@ path('report/', report , name='report'),
 path('get-fine/', get_fine, name='get_fine'),
 path('get-user-fine/', get_user_fine, name='get_user_fine'),
 path('pay-user-fine/', pay_user_fine, name='pay_user_fine'),
-path('report/', report, name='report'),
 path('download-sample/', download_sample, name='download_sample'),
 path('download-book-sample/', download_book_sample, name='download_book_sample'),
 path('get-issued-user/', get_issued_user, name='get_issued_user'),
 path('ajax/search-user/',ajaxSearchUser, name='ajax_search_user'),
-
+path('get-add-book-details/', get_add_book_details, name='get_add_book_details'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

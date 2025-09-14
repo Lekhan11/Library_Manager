@@ -24,7 +24,14 @@
 
                 <!-- Book ID -->
                 <div class="mb-3">
-                    <label for="book_id" class="form-label">Accession Number :</label>
+                    <label for="isbn" class="form-label">ISBN :</label>
+                    <input type="number" class="form-control" id="isbn" name="isbn" required>
+                    <div class="invalid-feedback">
+                        Please provide a valid isbn.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="book_id" class="form-label">Accession Number : <span class="text-danger">*</span> </label>
                     <input type="text" class="form-control" id="book_id" name="book_id" required>
                     <div class="invalid-feedback">
                         Please provide a valid Book Accession Number.
@@ -33,7 +40,7 @@
 
                 <!-- Book Name -->
                 <div class="mb-3">
-                    <label for="book_name" class="form-label">Book Name :</label>
+                    <label for="book_name" class="form-label">Book Name :<span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="book_name" name="book_name" required>
                     <div class="invalid-feedback">
                         Please provide a valid book name.
@@ -42,25 +49,18 @@
 
                 <!-- Author -->
                 <div class="mb-3">
-                    <label for="author" class="form-label">Author :</label>
+                    <label for="author" class="form-label">Author :<span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="author" name="author" required>
                     <div class="invalid-feedback">
                         Please provide a valid author name.
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="isbn" class="form-label">ISBN :</label>
-                    <input type="number" class="form-control" id="isbn" name="isbn" required>
-                    <div class="invalid-feedback">
-                        Please provide a valid isbn.
-                    </div>
-                </div>
 
                 <!-- Publication -->
                 <div class="mb-3">
-                    <label for="publication" class="form-label">Publication :</label>
-                    <input type="text" class="form-control" id="publication" name="publications" required>
+                    <label for="publication" class="form-label">Publication :<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="publications" name="publications" required>
                     <div class="invalid-feedback">
                         Please provide a valid publication name.
                     </div>
@@ -68,7 +68,7 @@
 
                 <!-- Category -->
                 <div class="mb-3">
-                    <label for="category" class="form-label">Category :</label>
+                    <label for="category" class="form-label">Category :<span class="text-danger">*</span></label>
                     <select name="category" id="category" class="form-select" required>
                         <option selected disabled>Select The Category</option>
                         {% for category in categories %}
@@ -82,7 +82,7 @@
 
                 <!-- Quantity -->
                 <div class="mb-3">
-                    <label for="quantity" class="form-label">Quantity :</label>
+                    <label for="quantity" class="form-label">Quantity :<span class="text-danger">*</span></label>
                     <input type="number" class="form-control" id="quantity" name="quantity" required min="1">
                     <div class="invalid-feedback">
                         Please provide a valid quantity (at least 1).
@@ -124,4 +124,6 @@
     </div>
 </div>
 
+{% load static %}
+<script src="{% static 'js/addBookDetail.js' %}"></script>
 {% endblock %}

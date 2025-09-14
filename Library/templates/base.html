@@ -12,7 +12,7 @@
 <body class="d-flex flex-column" style="height: 100vh;">
 
     <!-- Fixed Top Navbar -->
-    <nav class="navbar navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-dark bg-secondary fixed-top">
         {% if logo and logo.url %}
         <img src="{{ logo.url }}" alt="Logo" class="rounded-circle me-1" style="height: 40px; width: 40px; object-fit: cover;">
     {% else %}
@@ -27,15 +27,15 @@
     <!-- Sidebar and Content Layout -->
     <div class="d-flex flex-grow-1 pt-5">
         <!-- Static Sidebar -->
-        <div class="bg-dark text-white p-3" style="width: 250px; height: 100vh; position: fixed;">
-            <ul class="navbar-nav">
+        <div class="bg-light border border-dark text-dark p-3" style="width: 250px; height: 100vh; position: fixed;">
+            <ul class="navbar-nav ">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">Home <i class="bi bi-house-fill"></i></a>
+                    <a class="nav-link text-dark" href="{% url 'home' %}">Home <i class="bi bi-house-fill"></i></a>
                 </li>
 
                 <!-- Manage Users Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle text-dark" href="#" id="dropdownMenuButton" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Manage Users <i class="bi bi-gear-fill"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -46,7 +46,7 @@
 
                 <!-- Manage Books Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link text-dark dropdown-toggle" href="#" id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Manage Books <i class="bi bi-gear-fill"></i>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
@@ -56,11 +56,11 @@
                     </ul>
                 </li>
                 
-                <li><a class="nav-link" href="{% url 'view_books' %}">View Books <i class="bi bi-eye-fill"></i></a></li>
-                <li><a class="nav-link" href="{% url 'fine' %}"> Fine <i class="bi bi-currency-rupee"></i></a></li>
+                <li><a class="nav-link text-dark" href="{% url 'view_books' %}">View Books <i class="bi bi-eye-fill"></i></a></li>
+                <li><a class="nav-link text-dark" href="{% url 'fine' %}"> Fine <i class="bi bi-currency-rupee"></i></a></li>
                 <!-- Manage Bulk Add -->
                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link text-dark dropdown-toggle" href="#" id="dropdownMenuButton2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Bulk Add <i class="bi bi-opencollective "></i>
                     </a>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
@@ -68,8 +68,8 @@
                     <li><a class="dropdown-item" href="{% url 'bulkadd_books' %}">Bulk Add Books <i class="bi bi-plus-circle-fill"></i></a></li>
                 </ul>
                  </li>
-                 <li><a class="nav-link" href="{% url 'report' %}">Report <i class="bi bi-gear-fill"></i></a></li>
-                 <li><a class="nav-link" href="{% url 'settings' %}">Settings <i class="bi bi-gear-fill"></i></a></li>
+                 <li><a class="nav-link text-dark" href="{% url 'report' %}">Report <i class="bi bi-gear-fill"></i></a></li>
+                 <li><a class="nav-link text-dark" href="{% url 'settings' %}">Settings <i class="bi bi-gear-fill"></i></a></li>
             </ul>
         </div>
 

@@ -63,7 +63,7 @@
                         <td>{{ searched_student.class_id }}</td>
                         <td>{{ searched_student.section }}</td>
                         <td>{{ searched_student.books_issued }} </td>
-                        <td>{{ searched_student.books_pending }} <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{searched_student.roll_no}}"><i class="bi bi-eye"></i></button></td>
+                        <td>{{ searched_student.pending_books_count }} <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{searched_student.roll_no}}"><i class="bi bi-eye"></i></button></td>
                         <td>{{ searched_student.books_returned }}</td>
                         <td>{{searched_student.fine}}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ searched_student.id }}">Update</button></td>
@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="modal-body">
                                     {% for book in searched_student.pending_books %}
-                                    <li>{{ book.book.title }} ({{book.book.accession_no}})</li>
+                                    <li>{{ book.book_id.title }} ({{book.accession_no}})</li>
                                 {% empty %}
                                     <li>No books issued</li>
                                 {% endfor %}                                    </div>
@@ -124,7 +124,7 @@
                         <td>{{ user.class_id }}</td>
                         <td>{{ user.section }}</td>
                         <td>{{ user.books_issued }}</td>
-                        <td>{{ user.books_pending }}  <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{user.roll_no}}"><i class="bi bi-eye"></i></button></td>
+                        <td>{{ user.pending_books_count }}  <button class="btn" data-bs-toggle="modal" data-bs-target="#issuedBooks{{user.roll_no}}"><i class="bi bi-eye"></i></button></td>
                         <td>{{ user.books_returned }}</td>
                         <td>{{user.fine}}</td>
                         <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal{{ user.id }}">Update</button></td>
@@ -139,7 +139,7 @@
                                     </div>
                                     <div class="modal-body">
                                         {% for book in user.pending_books %}
-                                        <li>{{ book.book.title }} ({{book.accession_no}})</li>
+                                        <li>{{ book.book_id.title }} ({{book.accession_no}})</li>
                                     {% empty %}
                                         <li>No books issued</li>
                                     {% endfor %}                                    </div>
